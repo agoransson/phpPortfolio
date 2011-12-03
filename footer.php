@@ -1,16 +1,17 @@
 <?php
+
 /********************************************************\
- * File: 	index.php				*
- * Author: 	Andreas Göransson			*
- * Date: 	2011-11-21				*
- * Organization: Andreas Göransson			*
- *							*
- * Project: 	Portfolio.				*
- *							*
- * Description:	Footer script.				*
+ * File: 	footer.php									*
+ * Author: 	Andreas Göransson							*
+ * Date: 	2011-11-21									*
+ * Organization: Andreas Göransson						*
+ *														*
+ * Project: 	phpPortfolio.							*
+ *														*
+ * Description:	Footer script.							*
 \********************************************************/
 
-include_once("config.php");
+global $messages;
 
 // Print errors... 
 if (!empty($messages)) {
@@ -21,8 +22,24 @@ if (!empty($messages)) {
 
 // Links
 print "<div id=\"links\">";
-print ($title === "portfolio" ? "<a href=\"admin.php\">login</a>" : ( ($title === "admin" && isset($_SESSION["loggedIn"]) && $_SESSION["loggedIn"] === true) ? "<a href=\"logout.php\">logout</a>" : ($title === "cv" ? "<a href=\"cv.php?print=pdf\">save as pdf</a>" : "")) );
-
+switch( $title ){
+	case "portfolio":
+		print "<a href=\"admin.php\">login</a>";
+		break;
+	case "cv":
+		print "<a href=\"cv.php?print=pdf\">save as pdf</a>";
+		break;
+	case "admin":
+		if( isset($_SESSION["loggedIn"]) && $_SESSION["loggedIn"] === true )
+			print "<a href=\"logout.php\">logout</a>";
+		break;
+	case "install":
+		// Nothing
+		break;
+	default:
+		// Nothing
+		break;
+}
 print "</div>";
 
 // Information

@@ -1,20 +1,37 @@
 <?php
 
 /********************************************************\
- * File: 	functions.php				*
- * Author: 	Andreas Göransson			*
- * Date: 	2011-11-21				*
- * Organization: Andreas Göransson			*
- *							*
- * Project: 	Portfolio.				*
- *							*
- * Description:	Functions.				*
+ * File: 	functions.php								*
+ * Author: 	Andreas Göransson							*
+ * Date: 	2011-11-21									*
+ * Organization: Andreas Göransson						*
+ *														*
+ * Project: 	phpPortfolio.							*
+ *														*
+ * Description:	Extra functions.						*
 \********************************************************/
 
-require('fpdf.php');
+/* Use the global message array! */
+global $messages;
 
 // Start a new, or continue the old, PHP session.
 session_start();
+
+function checkInstalled(){
+	$filename = "installed.now";
+	$installscript = "install.php";
+	
+	if( file_exists($filename) ){
+		// Installed: Try to remove/rename the install script and return true.
+		if( file_exists($installscript) )
+			rename("install.php", "installphp.bak");
+		
+		return true;
+	}else{		
+		// Not installed yet: just return false
+		return false;
+	}
+}
 
 //creates a 3 character sequence
 function createSalt(){
@@ -22,54 +39,57 @@ function createSalt(){
 	return substr($string, 0, 3);
 }
 
-function register($username, $pass1, $pass2){
+function register( $userlogin, $userpw1, $userpw2, $fullname, $street, $city, $country, $phone, $email ){
 	// Make sure the two passwords are the same, and that the username doesn't exeed the limit
-	if( $pass1 != $pass2 )
+	if( $userpw1 != $userpw2 )
 		return false;
 	if( strlen($username) > 30 )
 		return false;
 
 	// Get the hash
-	$hash = hash('sha256', $pass1);
+	$hash = hash( "sha256", $userpw1 );
 	
 	// Add the randomizer
 	$salt = createSalt();
-	$hash = hash('sha256', $salt . $hash);
+	$hash = hash( "sha256", $salt . $hash );
 
 	$_POST["salt"] = $salt;
 	$_POST["hash"] = $hash;
 	
 	// ...and make sure someone isn't trying to hack the db.
 	$username = mysql_real_escape_string($username);
-	$query = "INSERT INTO users ( username, password, salt )
-		VALUES ( '$username' , '$hash' , '$salt' );";
-
-	mysql_query( $query, $link ) or die ( mysql_error() );
-
-	// Move to the start-page
-	header('Location: index.php');
+	$query = "INSERT INTO cv_main ( username, password, salt, name, street, city, country, phone, email )
+		VALUES ( '$userlogin', '$hash', '$salt', '$fullname', '$street', '$city', '$country', '$phone', '$email' );";
+		
+	if( $link )
+		mysql_query( $query, $link ) or die ( mysql_error() );
+	else
+		mysql_query( $query ) or die ( mysql_error() );
+		
+	return true;
 }
 
 function attemptLogIn($username, $password){
-	//connect to the database here
 	$username = mysql_real_escape_string($username);
 
-	$query = "SELECT password, salt FROM users WHERE username = '$username';";
-	$result = mysql_query($query);
+	$query = "SELECT password, salt FROM cv_main WHERE username = '$username';";
+	$result = mysql_query( $query ) or die ( mysql_error() );
 
-	if(mysql_num_rows($result) < 1){
+	if( mysql_num_rows($result) < 1 ){
 		// No such user!
 		if( isset($_SESSION["loggedIn"]) )
 			unset( $_SESSION["loggedIn"] );
+			
 		return false;
 	}
 
-	$userData = mysql_fetch_array($result, MYSQL_ASSOC);
-	$hash = hash('sha256', $userData['salt'] . hash('sha256', $password) );
-	if($hash != $userData['password']){
+	$row = mysql_fetch_array( $result, MYSQL_ASSOC );
+	$hash = hash( "sha256", $row["salt"] . hash("sha256", $password) );
+	if( $hash != $row['password'] ){
 		// Incorrect password!
 		if( isset($_SESSION["loggedIn"]) )
 			unset( $_SESSION["loggedIn"] );
+		
 		return false;
 	}
 
@@ -105,12 +125,9 @@ function getImageList($directory){
 }
 
 function getTableRow($row){
-	$id = $row["idprojects"];
+	$id = $row["id"];
 	$name = $row["name"];
 	$description = $row["description"];
-	//$image = $row["image"];
-	//$image_gray = str_replace( ".png", "_gray.png", $image );
-	$for = $row["for"];
 	$when = $row["date"];
 	$tags = $row["tags"];
 
@@ -120,7 +137,7 @@ function getTableRow($row){
 
 /* Returns a html-version of the project */
 function htmlifyProject($row){//, $index) {
-	$id = $row["idprojects"];
+	$id = $row["id"];
 	$name = $row["name"];
 	$description = $row["description"];
 
@@ -133,10 +150,10 @@ function htmlifyProject($row){//, $index) {
 	$tags = $row["tags"];
 
 	// Used to add a specific class (for proper margins)
-	$classpos = ($index%4?1:0);
+	/*$classpos = ($index%4?1:0);
 	if( $classpos != 0 ){
 		$classpos = ($index%3?1:2);
-	}
+	}*/
 
 	//$ret = "<div class=\"project\" style=\"background: url('" . $image . "') bottom;\">";
 	$ret = "<div id=\"" . $id . "\" name=\"" . $name . "\" class=\"project\" style=\"background-image: url('" . $image_gray . "')\">";

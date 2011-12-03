@@ -1,15 +1,14 @@
-
 <?php
 
 /********************************************************\
- * File: 	project.php				*
- * Author: 	Andreas Göransson			*
- * Date: 	2011-11-21				*
- * Organization: Andreas Göransson			*
- *							*
- * Project: 	Portfolio.				*
- *							*
- * Description:	Project details.			*
+ * File: 	project.php									*
+ * Author: 	Andreas Göransson							*
+ * Date: 	2011-11-21									*
+ * Organization: Andreas Göransson						*
+ *														*
+ * Project: 	phpPortfolio.							*
+ *														*
+ * Description:	Project details.						*
 \********************************************************/
 
 /* Include the configuration file - contains the database connection */
@@ -31,7 +30,7 @@ if (isset($_POST["login"])) {
 }
 
 /* Load project from db */
-$query = "SELECT * FROM projects WHERE idprojects = " . $id;
+$query = "SELECT * FROM cv_projects WHERE id = " . $id;
 $result = mysql_query($query, $link);
 if( $row = mysql_fetch_assoc($result) ){
 	$name = $row["name"];

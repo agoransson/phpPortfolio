@@ -1,4 +1,18 @@
 <?php
+
+/********************************************************\
+ * File: 	generatedpfg.php							*
+ * Author: 	Andreas Göransson							*
+ * Date: 	2011-12-02									*
+ * Organization: Andreas Göransson						*
+ *														*
+ * Project: 	phpPortfolio.							*
+ *														*
+ * Description:	PDF generation for cv.php				*
+\********************************************************/
+
+require("fpdf.php");
+
 // For reference:
 //  A4 size = 297 x 210 mm
 //  Point -> mm conversion: pt * 0.35 = mm   [pt = 1/72in, in = 25.4mm]
@@ -44,7 +58,7 @@ $pdf->SetTextColor( 0, 0, 0 );
 $pdf->SetDrawColor( 99, 99, 99 );
 
 // Add table cv_main
-$query = "SELECT name, street, address, phone, email FROM cv_main ORDER BY id DESC LIMIT 1";
+$query = "SELECT name, street, city, phone, email FROM cv_main ORDER BY id DESC LIMIT 1";
 $result = mysql_query($query, $link) or die( mysql_error() );
 while( $row = mysql_fetch_array($result, MYSQL_NUM) ){
 	// Surrounding box

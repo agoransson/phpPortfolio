@@ -1,14 +1,14 @@
 <?php
 
 /********************************************************\
- * File: 	index.php				*
- * Author: 	Andreas Göransson			*
- * Date: 	2011-11-21				*
- * Organization: Andreas Göransson			*
- *							*
- * Project: 	Portfolio.				*
- *							*
- * Description:	Main page.				*
+ * File: 	index.php									*
+ * Author: 	Andreas Göransson							*
+ * Date: 	2011-11-21									*
+ * Organization: Andreas Göransson						*
+ *														*
+ * Project: 	phpPortfolio.							*
+ *														*
+ * Description:	Start page.								*
 \********************************************************/
  
 /* Include the configuration file - contains the database connection */
@@ -19,6 +19,10 @@ global $messages;
 
 /* Is the user logged in? */
 $title = "portfolio";
+
+if( checkInstalled() == false ){
+	header( "Location: install.php" );
+}
 
 ?>
 
@@ -68,11 +72,13 @@ $title = "portfolio";
 	<!-- BEGIN SPECIFIC CONTENT -->
 	<div id="content">
 	<?php
-		$query = "SELECT * FROM projects ORDER BY date DESC, name ASC";
-		$result = mysql_query($query, $link) or die ( mysql_error() );
-		
-		while( $row = mysql_fetch_assoc($result) ){
-			print htmlifyProject($row);
+		if( checkInstalled() == true ){
+			$query = "SELECT * FROM cv_projects ORDER BY date DESC, name ASC";
+			$result = mysql_query($query, $link) or die ( mysql_error() );
+			
+			while( $row = mysql_fetch_assoc($result) ){
+				print htmlifyProject($row);
+			}
 		}
 	?>
 	</div>

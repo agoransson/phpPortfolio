@@ -1,38 +1,79 @@
 <?php
 
 /********************************************************\
- * File: 	config.php				*
- * Author: 	Andreas Göransson			*
- * Date: 	2011-11-21				*
- * Organization: Andreas Göransson			*
- *							*
- * Project: 	Portfolio.				*
- *							*
- * Description:	Header script.				*
+ * File: 	header.php									*
+ * Author: 	Andreas Göransson							*
+ * Date: 	2011-11-21									*
+ * Organization: Andreas Göransson						*
+ *														*
+ * Project: 	phpPortfolio.							*
+ *														*
+ * Description:	Header script.							*
 \********************************************************/
 
- 
 include_once("config.php");
 
-$webkit = strpos($_SERVER['HTTP_USER_AGENT'],"AppleWebKit");	
+global $link;
 
-// Logo
-print "<div id=\"headerleft\">";
+$name = "";
+$email = "";
 
-print ($title === "portfolio" || $title === "cv" ? "<a id=\"trigger\" href=\"mailto:ag@santiclaws.se\">Andreas Göransson</a>" : ($title === "admin" ? "<a href=\"index.php\" class=\"title\">back</a>" : "<a href=\"javascript:history.back()\" class=\"title\">back</a>"));
-print "</div>";
-
-
-// Title (upper right)
-print "<div id=\"headerright\">";
-
-if( $webkit === true ){
-	// No page-title if webkit?
-}else{	
-	print ( $title === "portfolio" ? "<p class=\"title\"><a href=\"index.php\">portfolio</a>|<a class=\"notselected\" href=\"cv.php\">CV</a>" : ( $title === "cv" ? "<p class=\"title\"><a class=\"notselected\" href=\"index.php\">portfolio</a>|<a href=\"cv.php\">CV</a>" : "<p class=\"title\">".$title."</p>" ) );
+// Get the name and email
+if( checkInstalled() == true ){
+	$query = "SELECT name, email FROM cv_main ORDER BY id LIMIT 1";
+	$result =  mysql_query( $query, $link ) or die ( mysql_error() );
+	
+	while( $row = mysql_fetch_assoc($result) ){
+		$name = $row["name"];
+		$email = $row["email"];
+	}
 }
 
+// Get the browser context, this doesn't really work though I think... bad results depending on browser.
+$webkit = strpos( $_SERVER['HTTP_USER_AGENT'], "AppleWebKit" );	
+
+// Left side of header (message)
+print '<div id="headerleft">';
+switch( $title ){
+	case "portfolio":
+		print '<a id="trigger" href="mailto:' . $email . '">' . $name . '</a>';
+		break;
+	case "cv":
+		print '<a id="trigger" href="mailto:' . $email . '">' . $name . '</a>';
+		break;
+	case "admin":
+		print '<a href="index.php" class="title">back</a>';
+		break;
+	case "install":
+		print "";	
+		break;
+	default:
+		print '<a href="javascript:history.back()" class="title">back</a>';
+		break;
+}
 print "</div>";
 
+
+// Right side of header (title)
+print '<div id="headerright">';
+if( $webkit === true ){
+	// No page-title if webkit?
+}else{
+	switch( $title ){
+		case "portfolio":
+			print '<p class="title"><a href="index.php">portfolio</a>|<a class="notselected" href="cv.php">CV</a>';
+			break;
+		case "cv":
+			print '<p class="title"><a class="notselected" href="index.php">portfolio</a>|<a href="cv.php">CV</a>';
+			break;
+		case "admin":
+			// Nothing
+			break;
+		default:
+			print '<p class="title">'.$title.'</p>';
+			break;
+	}
+}
+print "</div>";
 
 ?>

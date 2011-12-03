@@ -2,18 +2,22 @@
 <?php
 
 /********************************************************\
- * File: 	admin.php				*
- * Author: 	Andreas Göransson			*
- * Date: 	2011-11-22				*
- * Organization: Andreas Göransson			*
- *							*
- * Project: 	Portfolio.				*
- *							*
- * Description:	Administrative interface.		*
+ * File: 	admin.php									*
+ * Author: 	Andreas Göransson							*
+ * Date: 	2011-11-21									*
+ * Organization: Andreas Göransson						*
+ *														*
+ * Project: 	phpPortfolio.							*
+ *														*
+ * Description:	Administrative interface.				*
 \********************************************************/
 
 /* Include the configuration file - contains the database connection */
 include_once("config.php");
+
+if( checkInstalled() == false ){
+	header( "Location: install.php" );
+}
 
 /* Use the global message array! */
 global $messages;
@@ -32,7 +36,7 @@ if ( isset($_POST["save"]) && (isset($_SESSION["loggedIn"]) && $_SESSION["logged
 	$description = $_POST["description"];
 
 	// Make sure the project name doesn't exist!
-	$query = "SELECT * FROM projects WHERE name='$name'";
+	$query = "SELECT * FROM cv_projects WHERE name='$name'";
 	
 	// Run query:
 	$result = mysql_query( $query, $link ) or die ( mysql_error() );
@@ -43,11 +47,11 @@ if ( isset($_POST["save"]) && (isset($_SESSION["loggedIn"]) && $_SESSION["logged
 	}
 	
 	if( empty($messages) ) {
-		$query = "INSERT INTO projects (name, date, target" . /*(strlen($image) > 0 ? ", image" : "") .*/ ", tags, description) VALUES ('$name', '$date', '$target'" . /*(strlen($image)>0? ", '$image'" : "") .*/ ", '$tags', '$description')";
+		$query = "INSERT INTO cv_projects (name, date, tags, description) VALUES ('$name', '$date', '$tags', '$description')";
 		$result = mysql_query( $query, $link ) or die ( mysql_error() );
 	}
 }else if( isset($_POST["login"]) ){
-	if( !attemptLogIn( $_POST["username"], $_POST["password"] ) ){
+	if( !attemptLogIn( $_POST["username"], $_POST["password"] )  ){
 		header( "Location: index.php" );
 	}
 }
@@ -100,7 +104,7 @@ if ( isset($_POST["save"]) && (isset($_SESSION["loggedIn"]) && $_SESSION["logged
 			print "</form>";
 		}else if( isset($_SESSION["loggedIn"]) && $_SESSION["loggedIn"] === true ){
 			// else : Do project list
-			$query = "SELECT * FROM projects";
+			$query = "SELECT * FROM cv_projects";
 			$result = mysql_query($query, $link);
 		
 			print "<table class=\"reference\"><tbody>";

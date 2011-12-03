@@ -2,14 +2,14 @@
 <?php
 
 /********************************************************\
- * File: 	cv.php					*
- * Author: 	Andreas Göransson			*
- * Date: 	2011-11-21				*
- * Organization: Andreas Göransson			*
- *							*
- * Project: 	Portfolio.				*
- *							*
- * Description:	CV page.				*
+ * File: 	cv.php										*
+ * Author: 	Andreas Göransson							*
+ * Date: 	2011-11-21									*
+ * Organization: Andreas Göransson						*
+ *														*
+ * Project: 	phpPortfolio.							*
+ *														*
+ * Description:	Curriculum Vitae.						*
 \********************************************************/
 
 /* Include the configuration file - contains the database connection */
@@ -82,7 +82,7 @@ if( isset($_GET["print"]) ){
 
 		<section id="cv_contact" class="cv">
 		<?php
-			$query = "SELECT name, street, address, phone, email FROM cv_main ORDER BY id DESC LIMIT 1";
+			$query = "SELECT name, street, city, phone, email FROM cv_main ORDER BY id DESC LIMIT 1";
 			$result = mysql_query($query, $link) or die( mysql_error() );
 			print "<table style=\"text-align:center\">";
 			while( $row = mysql_fetch_array($result, MYSQL_NUM) ){
