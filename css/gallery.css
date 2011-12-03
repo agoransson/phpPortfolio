@@ -1,0 +1,54 @@
+
+
+div#slideshow {
+	width: 820px; 
+	height: 500px; 
+	padding: 0;
+	overflow: scroll; /* Allows the slides to be viewed using scrollbar if Javascript isn't available */
+	position: relative;
+	left: 3px;
+	z-index: 5;
+}
+
+div#slideshow ul#nav {
+	padding: 0;
+	display: none;
+	list-style: none;
+	position: relative;
+	top: 200px; 
+	z-index: 15;
+}
+
+div#slideshow ul#nav li#prev {
+	float: left; 
+	margin: 0 0 0 20px;
+}
+
+div#slideshow ul#nav li#next {
+	float: right; 
+	margin: 0 30px 0 0;
+}
+
+div#slideshow ul#nav li a {
+	display: block;
+	width: 100px; 
+	height: 100px; 
+	text-indent: -9999px;
+}
+
+div#slideshow ul#nav li#prev a {
+	background: url(../media/left.png);
+}
+
+div#slideshow ul#nav li#next a {
+	background: url(../media/right.png);
+}
+
+div#slideshow ul#slides {
+	list-style: none;
+}
+
+div#slideshow ul#slides li {
+	margin: 0;
+}
+

@@ -1,0 +1,160 @@
+
+
+/* BASE STYLE */
+body {
+	margin:20px 0px;
+	padding:0px;
+	text-align:center;
+}
+
+/* The surrounding box, wraps all  */	
+#wrapper{
+	width:820px;
+	margin:0px auto;
+	margin-top:5px;
+	margin-bottom: 5px;
+	text-align:center;
+	/*padding:15px;*/
+	/*border:1px solid #333;*/
+	/*background-color:#446f21;*/
+	padding: 0px;
+
+	font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+	color: #333;
+}
+
+/* HEADER */
+#header{
+	overflow: hidden;
+	padding: 0;
+	/*background-color:#86ac67;*/
+}
+#headerleft{
+	/*width: 122px;*/
+	text-align: left;
+	width: 100px;
+	height: 40px;
+	float: left;
+}
+
+#headerleft img{
+	margin-top: 5px;
+	margin-left: 5px;
+}
+
+#headerright{
+	width: 720px;
+	/*width: 100%;*/
+	float: left;
+	padding: 0;
+}
+
+.title{
+	float: right;
+	text-transform: uppercase;
+	letter-spacing: 4px;
+	text-decoration: none;
+	font-size: 2.1em;
+	margin: 0;
+	font-weight: bold;
+}
+
+/* CONTENT */
+#content{
+	overflow: hidden;
+	border-top-style:dotted;
+	border-bottom-style:dotted;
+	border-color: #333;
+	border-width: 1px;
+	padding: 2px;
+
+	position: relative;
+}
+
+#footer{
+	/*background-color:#86ac67;*/
+	padding: 5px;
+	color: #333;
+	/* Copyleft ?*/
+	font-size: 0.6em;
+	/*font-family: verdana;*/
+	margin: 0;
+}
+
+#wrapper table{
+	margin: auto;
+	text-align: left;
+}
+
+p.infotext{
+	text-align: left;
+	font-weight: normal;
+	font-size: 0.8em;
+	padding-left: 50px;
+	padding-right: 50px;
+}
+
+#errors{
+	text-align: left;
+	font-weight: normal;
+	font-size: 1.0em;
+	
+	border:1px dashed #F00;
+	background-color:#eee;
+	margin-left: 100px;
+	margin-right: 100px;
+	margin-bottom: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+/* FOOTER */
+#copyleft{
+	background-color:#86ac67;
+	font-size: 0.6em;
+	/*font-family: verdana;*/
+	margin: 0;
+}
+
+#links{
+	padding: 5px;
+}
+
+.login{
+	text-decoration: none;
+}
+
+#bestviewed{
+	margin-bottom: 5px;
+}
+
+a:link{
+	text-decoration:  none;
+	color:            #333;
+}
+ 
+a:visited{
+	text-decoration:  none;
+	color:            #333;
+}
+ 
+a:hover{
+	color:            blue;
+}
+ 
+a:active{
+	text-decoration:  underline;
+	color: white;
+} 
+
+a.notselected{
+	color: #ccc;
+}
+
+a.notselected:hover{
+	color: blue;
+}
+
+
+
+

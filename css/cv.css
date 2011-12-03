@@ -1,0 +1,48 @@
+.cv{
+	width: 100%;
+	text-align: center;
+	border: 1px solid #999;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+section {
+	width: 100%;
+}
+
+table{
+	width: 100%;
+	text-align: center;
+}
+
+td{
+	padding: 8px 10px 12px 10px;	
+}
+
+#cv_head{
+	font-size: 3em;
+	letter-spacing: 2px;
+	color: #000077;
+	border: 0;
+}
+
+.leftcol{
+	width: 25%;
+}
+
+.rightcol{
+	width: 85%;
+}
+
+.rowtitle{
+	font-size: 1.2em;
+	margin-bottom: 3px;
+}
+
+.nontitle{
+	font-size: 0.9em;
+}
+
+.description{
+	font-size: 1.0em;
+}

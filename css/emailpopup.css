@@ -1,0 +1,14 @@
+/*
+ * Andreas Göransson, Portfolio
+ */
+
+div#email_popup{
+	display: none;
+	position: absolute;
+	width: 175px;
+	padding: 10px;
+	text-align: left;
+	background: rgba(255,255,255,0.9);
+	border: 1px solid #aaa;
+	font-size: 90%;
+}

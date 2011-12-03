@@ -1,0 +1,90 @@
+/*
+ * Andreas Göransson, Portfolio
+ */
+
+div#email_popup{
+	display: none;
+	position: absolute;
+	width: 175px;
+	padding: 10px;
+	text-align: left;
+	background: rgba(255,255,255,0.9);
+	border: 1px solid #aaa;
+	font-size: 90%;
+}
+
+div#projectinfo h2, h4{
+	text-align: left;
+	margin-bottom: 4px;
+}
+
+div#projectinfo h2{
+	margin-top: 10px;
+	font-size: 1.5em;
+}
+
+div#projectinfo h4{
+	font-size: 1.0em;
+	margin-left: 2px;
+}
+
+div#projectinfo p{
+	text-align: justify;
+	font-size: 0.8em;
+	margin: 4px 2px 4px 2px;
+}
+
+table.reference {
+    background-color: #FFFFFF;
+    border: 1px solid #C3C3C3;
+    border-collapse: collapse;
+    width: 100%;
+}	
+
+table.reference td {
+    border: 1px solid #C3C3C3;
+    padding: 3px;
+    vertical-align: top;
+}
+
+.project{
+	display: block;
+	width: 200px;
+	height: 200px;
+	background-attachment:fixed;
+	background: #FFFFFF;
+	margin: 2px;	
+	/*background-repeat:no-repeat;*/
+	float: left;
+	color: #ccc;
+}
+
+.projecttitle{
+	margin: 0;
+	padding: 0;
+	padding-top: 3px;
+	font-size: 0.875em;
+	background-color: rgba(0,0,0,0.7);
+	height: 20px;
+}
+
+.projectdesc{
+	/*text-align: left;*/
+	margin-top: 137px;
+	/*padding-left: 5px;
+	padding-top: 3px;
+	padding-bottom: 3px;*/
+	padding-top: 5px;
+	font-size: 0.675em;
+	background-color: rgba(0,0,0,0.7);
+	height: 35px;
+}
+
+.projectdate{
+	padding-bottom: 1px;
+}
+
+.projecttags{
+	padding: 0 4px 0 4px;
+	text-align: left;
+}
