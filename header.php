@@ -44,9 +44,6 @@ switch( $title ){
 	case "admin":
 		print '<a href="index.php" class="title">back</a>';
 		break;
-	case "install":
-		print "";	
-		break;
 	default:
 		print '<a href="javascript:history.back()" class="title">back</a>';
 		break;
@@ -65,9 +62,6 @@ if( $webkit === true ){
 			break;
 		case "cv":
 			print '<p class="title"><a class="notselected" href="index.php">portfolio</a>|<a href="cv.php">CV</a>';
-			break;
-		case "admin":
-			// Nothing
 			break;
 		default:
 			print '<p class="title">'.$title.'</p>';

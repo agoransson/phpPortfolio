@@ -14,13 +14,9 @@
 /* Include the configuration file - contains the database connection */
 include_once("config.php");
 
-/* Use the global message array! */
-global $messages;
-
-/* Is the user logged in? */
 $title = "portfolio";
 
-if( checkInstalled() == false ){
+if( !checkInstalled() ){
 	header( "Location: install.php" );
 }
 
@@ -35,16 +31,18 @@ if( checkInstalled() == false ){
 	<?php
 		include("head.php");
 	
+		// TODO this needs to be fixed!
+		
 		$webkit = strpos($_SERVER['HTTP_USER_AGENT'],"AppleWebKit");
 
 		if($webkit === true){
-			print "<link rel=\"stylesheet\" type=\"text/css\" href=\"./css/desktop.css\">";
-			print "<link rel=\"stylesheet\" type=\"text/css\" href=\"./css/emailpopup.css\">";
-			print "<link rel=\"stylesheet\" type=\"text/css\" href=\"./css/index.css\">";
+			print '<link rel="stylesheet" type="text/css" href="./css/webkit.css">';
+			print '<link rel="stylesheet" type="text/css" href="./css/emailpopup.css">';
+			print '<link rel="stylesheet" type="text/css" href="./css/index.css">';
 		}else{
-			print "<link rel=\"stylesheet\" type=\"text/css\" href=\"./css/desktop.css\">";
-			print "<link rel=\"stylesheet\" type=\"text/css\" href=\"./css/emailpopup.css\">";
-			print "<link rel=\"stylesheet\" type=\"text/css\" href=\"./css/index.css\">";
+			print '<link rel="stylesheet" type="text/css" href="./css/desktop.css">';
+			print '<link rel="stylesheet" type="text/css" href="./css/emailpopup.css">';
+			print '<link rel="stylesheet" type="text/css" href="./css/index.css">';
 		}
 	?>
 
@@ -53,13 +51,6 @@ if( checkInstalled() == false ){
 </head>
 
 <body>
-
-<!-- For debugging purposes -->
-<?php
-//print("<pre>");
-//print_r($_SESSION);
-//print("</pre>");
-?>
 
 <!-- BEGIN PAGE -->
 <div id="wrapper">
@@ -72,7 +63,8 @@ if( checkInstalled() == false ){
 	<!-- BEGIN SPECIFIC CONTENT -->
 	<div id="content">
 	<?php
-		if( checkInstalled() == true ){
+		// TODO Create module for this?
+		if( checkInstalled() ){
 			$query = "SELECT * FROM cv_projects ORDER BY date DESC, name ASC";
 			$result = mysql_query($query, $link) or die ( mysql_error() );
 			

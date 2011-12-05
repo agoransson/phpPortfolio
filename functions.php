@@ -85,7 +85,7 @@ function attemptLogIn($username, $password){
 
 	$row = mysql_fetch_array( $result, MYSQL_ASSOC );
 	$hash = hash( "sha256", $row["salt"] . hash("sha256", $password) );
-	if( $hash != $row['password'] ){
+	if( $hash != $row["password"] ){
 		// Incorrect password!
 		if( isset($_SESSION["loggedIn"]) )
 			unset( $_SESSION["loggedIn"] );
@@ -94,7 +94,8 @@ function attemptLogIn($username, $password){
 	}
 
 	$_SESSION["loggedIn"] = true;
-
+	$_SESSION["username"] = $username;
+	
 	// Logged in
 	return true;
 }
@@ -111,28 +112,16 @@ function getImageList($directory){
 		// if file isn't this directory or its parent, add it to the results
 		if( $file != "." && $file != ".." ){
 			// Make sure only images (jpg, png, gif, etc.) are accepted
-				
 			if( preg_match("/\.(jpg|png|bmp)$/i", $file) )
 				$results[] = $file;
 		}
 	}
 
-	// tidy up: close the handler
+	// tidy up: close the file handler
 	closedir($handler);
 
 	// done!
 	return $results;
-}
-
-function getTableRow($row){
-	$id = $row["id"];
-	$name = $row["name"];
-	$description = $row["description"];
-	$when = $row["date"];
-	$tags = $row["tags"];
-
-	
-	return "<tr>" . "<td>" . $id . "</td>" . "<td>" . $name . "</td>" . "<td>" . $when . "</td>" . "<td>" . $description . "</td>" . "<td><a href=\"delete.php?id=" . $id . "\">del</a></td>" . "</tr>";
 }
 
 /* Returns a html-version of the project */
@@ -143,33 +132,24 @@ function htmlifyProject($row){//, $index) {
 
 	$dir = preg_replace( "{\?}i", "", "./media/" . $name );
 
-	$image = $dir . "/icon.png"; //$row["image"];
+	$image = $dir . "/icon.png";
 	$image_gray = str_replace( ".png", "_gray.png", $image );
 	$target = $row["target"];
 	$when = $row["date"];
 	$tags = $row["tags"];
 
-	// Used to add a specific class (for proper margins)
-	/*$classpos = ($index%4?1:0);
-	if( $classpos != 0 ){
-		$classpos = ($index%3?1:2);
-	}*/
+	$ret = '<div id="'.$id.'" name="'.$name.'" class="project" style="background-image: url(\''.$image_gray.'\')">';
+	
+	$ret .= '<section class="projecttitle">';	
+	$ret .= '<p class="projectname">'.$name.'</p>';	
+	$ret .= '</section>';
 
-	//$ret = "<div class=\"project\" style=\"background: url('" . $image . "') bottom;\">";
-	$ret = "<div id=\"" . $id . "\" name=\"" . $name . "\" class=\"project\" style=\"background-image: url('" . $image_gray . "')\">";
-	// " . ($classpos==0?"left":($classpos == 2?"right":"middle")) . "
+	$ret .= '<section class="projectdesc">';
+	$ret .= '<p class="projectdate">'.$when.'</p>';
+	$ret .= '<p class="projecttags">'.$tags.'</p>';
+	$ret .= '</section>';
 
-	$ret .= "<section class=\"projecttitle\">";	
-	$ret .= "<p class=\"projectname\">" . $name . "</p>";	
-	$ret .= "</section>";
-
-	$ret .= "<section class=\"projectdesc\">";	
-	//$ret .= "target: " . $target . "</br>";	
-	$ret .= "<p class=\"projectdate\">" . $when . "</p>";
-	$ret .= "<p class=\"projecttags\">" . $tags . "</p>";
-	$ret .= "</section>";
-
-	$ret .= "</div>";
+	$ret .= '</div>';
 	
 	return $ret;
 }

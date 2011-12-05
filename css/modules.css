@@ -1,0 +1,29 @@
+ul.modulelist {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+li.modulelistitem{
+	display: inline;
+	float: left;
+}
+
+a.moduleitem {
+	color: #333;
+	display: block;
+	width: 100px;
+	background-color: #999;
+	padding: 2px 0 2px 0;
+}
+
+a.moduleitem:hover {
+	background-color: #aaa;
+	color: #333;
+	text-decoration: none;
+}
+
+a.moduleselected{
+	background-color: #ccc
+}

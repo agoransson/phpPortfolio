@@ -13,6 +13,11 @@
 
 include_once("functions.php");
 
+// Include all modules
+foreach( glob("modules/*.php") as $module ){
+    include $module;
+}
+
 global $link, $dbhost, $dbuser, $dbpass, $dbname, $dbname_app;
 
 if( checkInstalled() ){

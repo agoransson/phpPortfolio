@@ -95,7 +95,7 @@ p.infotext{
 }
 
 #errors{
-	text-align: left;
+	text-align: center;
 	font-weight: normal;
 	font-size: 1.0em;
 	
@@ -104,8 +104,7 @@ p.infotext{
 	margin-left: 100px;
 	margin-right: 100px;
 	margin-bottom: 5px;
-	padding-left: 5px;
-	padding-right: 5px;
+	padding: 2px 5px 2px 5px;
 }
 
 /* FOOTER */

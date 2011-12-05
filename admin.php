@@ -1,4 +1,3 @@
-
 <?php
 
 /********************************************************\
@@ -15,44 +14,42 @@
 /* Include the configuration file - contains the database connection */
 include_once("config.php");
 
-if( checkInstalled() == false ){
-	header( "Location: install.php" );
-}
-
-/* Use the global message array! */
-global $messages;
-
 /* Is the user logged in? */
 $title = "admin";
 
-/* If user added a new project */
-if ( isset($_POST["save"]) && (isset($_SESSION["loggedIn"]) && $_SESSION["loggedIn"] === true) ) {
 
-	$name = $_POST["name"];
-	$date = $_POST["date"];
-	$target = $_POST["target"];
-	$image = $_POST["image"];
-	$tags = $_POST["tags"];
-	$description = $_POST["description"];
+// Check if the site is installed correctly
+if( checkInstalled() == false )
+	header( "Location: install.php" );
 
-	// Make sure the project name doesn't exist!
-	$query = "SELECT * FROM cv_projects WHERE name='$name'";
-	
-	// Run query:
-	$result = mysql_query( $query, $link ) or die ( mysql_error() );
+// Make sure we're pointing to a module!
+if( count($_GET) == 0 )
+	header( (Login::LoggedIn() ? "Location: admin.php?mod=Projects" : "Location: admin.php?mod=Login") );
+else if( count($_GET) > 0 && !Login::LoggedIn() && $_GET["mod"] !== "Login" )
+	header( "Location: admin.php?mod=Login" );
 
-	// If a row exists with that name, issue an error message:
-	if( $row = mysql_fetch_array($result) ){
-		$messages[] = "Source already exist, try another!";
+// Load default module (Projects) if no module is loaded
+// if( (isset($_POST["loggedIn"]) && $_POST["loggedIn"] === true) && !isset($_GET["mod"]) ){
+	// header( "Location: admin.php?mod=Projects" );
+// }
+
+// Load all modules (Except the Login module)
+foreach( glob("modules/*.php") as $module ){
+	$classname = preg_replace('/\.[^.]*$/', '', basename ( $module ));
+	$modules[] = new $classname();
+}
+
+// Test POST methods for modules
+foreach( $modules as $mod ){
+	if( isset($_POST[$mod->Name()]) ){
+		$mod->POST();
 	}
-	
-	if( empty($messages) ) {
-		$query = "INSERT INTO cv_projects (name, date, tags, description) VALUES ('$name', '$date', '$tags', '$description')";
-		$result = mysql_query( $query, $link ) or die ( mysql_error() );
-	}
-}else if( isset($_POST["login"]) ){
-	if( !attemptLogIn( $_POST["username"], $_POST["password"] )  ){
-		header( "Location: index.php" );
+}
+
+// Test GET methods for modules
+foreach( $modules as $mod ){
+	if( isset($_GET["mod"]) && $_GET["mod"] == $mod->Name() && count($_GET) > 1 ){
+		$mod->GET();
 	}
 }
 
@@ -68,21 +65,26 @@ if ( isset($_POST["save"]) && (isset($_SESSION["loggedIn"]) && $_SESSION["logged
 	
 	$webkit = strpos($_SERVER['HTTP_USER_AGENT'],"AppleWebKit");		
 	if($webkit === true){
-		print "<link rel=\"stylesheet\" type=\"text/css\" href=\"./css/webkit.css\">";
+		print '<link rel="stylesheet" type="text/css" href="./css/webkit.css">';
+		print '<link rel="stylesheet" type="text/css" href="./css/modules.css">';
 	}else{
-		print "<link rel=\"stylesheet\" type=\"text/css\" href=\"./css/desktop.css\">";
+		print '<link rel="stylesheet" type="text/css" href="./css/modules.css">';
+		print '<link rel="stylesheet" type="text/css" href="./css/desktop.css">';
+	}
+	
+	// Load module CSS, if they exist!
+	foreach( $modules as $mod ){
+		if( isset($_GET["mod"]) && $_GET["mod"] == $mod->Name() ){
+			$css = "./modules/" . $mod->Name() . ".css";
+			if( file_exists($css) ){
+				print '<link rel="stylesheet" type="text/css" href="'.$css.'">';
+			}
+		}
 	}
 ?>
 </head>
 
 <body>
-
-<!-- For debugging purposes -->
-<?php
-//print("<pre>");
-//print_r($_SESSION);
-//print("</pre>");
-?>
 
 <!-- BEGIN PAGE -->
 <div id="wrapper">
@@ -94,41 +96,21 @@ if ( isset($_POST["save"]) && (isset($_SESSION["loggedIn"]) && $_SESSION["logged
 
 	<!-- BEGIN SPECIFIC CONTENT -->
 	<div id="content">
-	<?php 
-		if( !isset($_SESSION["loggedIn"]) ){
-			// if-not loggedIn : Do PHP login script here...
-			print "<form name=\"login\" action=\"" . $_SERVER["PHP_SELF"] . "\" method=\"POST\">";
-			print "Username: <input type=\"text\" name=\"username\" />";
-			print "Password: <input type=\"password\" name=\"password\" />";
-			print "<input type=\"submit\" value=\"Login\" name=\"login\"/>";
-			print "</form>";
-		}else if( isset($_SESSION["loggedIn"]) && $_SESSION["loggedIn"] === true ){
-			// else : Do project list
-			$query = "SELECT * FROM cv_projects";
-			$result = mysql_query($query, $link);
-		
-			print "<table class=\"reference\"><tbody>";
-			while( $row = mysql_fetch_assoc($result) ){
-				print getTableRow($row);
+	<?php		
+		// Do module mods
+		print '<ul class="modulelist">';
+		foreach( $modules as $mod ){
+			print ( isset($_GET["mod"]) && get_class($mod) === $_GET["mod"] ? $mod->Menu(true) : $mod->Menu() );
+		}
+		print '</ul>';
+
+		// Load selected module content
+		foreach( $modules as $mod ){
+			if( get_class($mod) === $_GET["mod"] ){
+				print $mod->Description();
+				print $mod->Content();
+				break;
 			}
-			print "</tbody></table>";
-
-			print "<hr>";
-
-			print "<form id=\"newproject\" action=\"" . $_SERVER["PHP_SELF"] . "\" method=\"POST\">";
-			print "<table class=\"reference\">";
-			print "<tbody>";
-			print "<tr><td>Name:</td><td><input type=\"text\" name=\"name\" maxlength=\"32\"></td></tr>";
-			print "<tr><td>Year:</td><td><input type=\"text\" name=\"date\" maxlength=\"32\"></td></tr>";
-			print "<tr><td>For:</td><td><input type=\"text\" name=\"for\" maxlength=\"32\"></td></tr>";
-			print "<!--tr><td>Image:</td><td><input type=\"text\" name=\"image\" maxlength=\"32\"></td></tr-->";
-			print "<tr><td>Tags:</td><td><input type=\"text\" name=\"tags\" maxlength=\"32\"></td></tr>";
-			print "<tr><td>Description:</td><td><textarea rows=\"5\" cols=\"47\" name=\"description\"></textarea></td></tr>";
-
-			print "<tr><td><input name=\"save\" type=\"submit\" value=\"Save\"></td></tr>";
-			print "</tbody>";
-			print "</table>";
-			print "</form>";
 		}
 	?>
 	</div>

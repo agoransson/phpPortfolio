@@ -76,9 +76,7 @@ CREATE TABLE `cv_projects` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(45) NOT NULL DEFAULT 'lipsum',
   `description` longtext NOT NULL,
-  `target` varchar(45) DEFAULT NULL,
   `date` int(11) NOT NULL,
-  `tags` varchar(45) DEFAULT NULL,
-  `gallery` longtext,
+  `tags` varchar(128) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

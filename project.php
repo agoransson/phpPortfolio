@@ -97,7 +97,7 @@ $title = $name;
 		<ul id="slides">
 		<?php
 			// We need to make sure to remove certain illegal characters!
-			$dir = preg_replace( "{\?}i", "", "./media/" . $name );
+			$dir = preg_replace( "{\?}i", "", "./media/" . $title );
 
 			$files = getImageList( $dir );
 			for( $i = 0; $i < count($files); $i++ ){
