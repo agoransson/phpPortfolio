@@ -15,12 +15,15 @@ include_once("CvModule.php");
 
 class Login extends CvModule {
 	
+	
 	// Attempt a login to the system
 	private function attemptLogIn($username, $password){
+		global $link, $dbprefix;
+	
 		$username = mysql_real_escape_string($username);
 
-		$query = "SELECT password, salt FROM cv_main WHERE username = '$username';";
-		$result = mysql_query( $query ) or die ( mysql_error() );
+		$query = "SELECT password, salt FROM " . $dbprefix . "main WHERE username = '$username';";
+		$result = mysql_query( $query, $link ) or die ( mysql_error() );
 
 		if( mysql_num_rows($result) < 1 ){
 			$this->error[] = "No such user";
@@ -75,7 +78,7 @@ class Login extends CvModule {
 	}
 	
 	function POST(){
-		if( !attemptLogIn($_POST["username"], $_POST["password"]) ){
+		if( !$this->attemptLogIn($_POST["username"], $_POST["password"]) ){
 			$this->error[] = "Wrong username and/or password! Try again.";
 		}else{
 			$_SESSION["loggedIn"] = true;
@@ -86,7 +89,6 @@ class Login extends CvModule {
 	
 	function GET(){
 		if( isset($_GET["logout"]) && $_GET["logout"] == true ){
-		print "HEJ";
 			Login::Logout();
 		}
 	}

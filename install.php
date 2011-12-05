@@ -48,40 +48,31 @@ function register( $userlogin, $userpw1, $userpw2, $fullname, $street, $city, $c
 }
 
 function editConfigFile( $host, $schema, $prefix, $user, $pass ){
-	// Edit config.php
-	$source = "config.php";
-	$target = "new_" . $source;
-	$sh = fopen($source, "r");
-	$th = fopen($target, "w");
+	// Select file
+    $file = "config.php";
 	
-	while( !feof($sh) ){
-		// Get the line
-		$line = fgets($sh);
-		
-		// Replace the line, and add the values.
-		if( strpos($line, '$dbhost=') !== false ){
-			$line = '$dbhost="' . $host . '";' . PHP_EOL;
-		}else if( strpost($line, '$dbname=') !== false ){
-			$line = '$dbname="' . $schema . '";' . PHP_EOL;
-		}else if( strpos($line, '$dbuser=') !== false ){
-			$line = '$dbuser="' . $user . '";' . PHP_EOL;
-		}else if( strpos($line, '$dbpass=') !== false ){
-			$line = '$dbpass="' . $pass . '";' . PHP_EOL;
-		}else if( strpost($line, '$dbprefix=') !== false ){
-			$line = '$dbprefix="' . $prefix . '";' . PHP_EOL;
-		}
-		
-		// Write the line to the "new_" file
-		fwrite( $th, $line );
-	}
+	// Patterns
+	$patterns = Array();
+	$patterns[] = '/(\s+)(\$)(dbhost)(=")(\w+)(";)/';
+	$patterns[] = '/(\s+)(\$)(dbuser)(=")(\w+)(";)/';
+	$patterns[] = '/(\s+)(\$)(dbpass)(=")(\w+)(";)/';
+	$patterns[] = '/(\s+)(\$)(dbname)(=")(\w+)(";)/';
+	$patterns[] = '/(\s+)(\$)(dbprefix)(=")(\w+)(";)/';
+
+	// Replacements
+	$replacements = Array();
+	$replacements[] = '$1$2$3$4'.$host.'$6';
+	$replacements[] = '$1$2$3$4'.$user.'$6';
+	$replacements[] = '$1$2$3$4'.$pass.'$6';
+	$replacements[] = '$1$2$3$4'.$schema.'$6';
+	$replacements[] = '$1$2$3$4'.$prefix.'$6';
 	
-	// Close files
-	fclose( $sh );
-	fclose( $th );
+	// Edit file
+	$config = file_get_contents($file);
+	$config = preg_replace($patterns, $replacements, $config);
 	
-	// Delete old file and rename the new file
-	unlink( $source );			
-	rename( $target, $source );
+	// Save file
+	file_put_contents($file, $config);
 }
 ?>
 
@@ -160,32 +151,30 @@ function editConfigFile( $host, $schema, $prefix, $user, $pass ){
 			$dbuser = $_POST["dbusername"];
 			$dbpass = $_POST["dbpassword"];
 			$dbprefix = $_POST["dbprefix"];
-						
-			// Execute the SQL script
-			$sqlFileToExecute = 'database.sql';
-			$f = fopen($sqlFileToExecute,"r+");
-			$sqlFile = fread($f, filesize($sqlFileToExecute));
-			$sqlArray = explode(';',$sqlFile);
 			
 			$connection = mysql_connect( $dbhost, $dbuser, $dbpass ) or die ( "Error connecting to database: " . mysql_error() );
 			mysql_select_db( $dbschema, $connection ) or die ( "Error selecting schema: " . mysql_error() );
-
+			
+			// Execute the SQL script
+			$sqlfile = file_get_contents( "database.sql" );
+			$queryArr = explode( ";", $sqlfile );
+			$pattern = "/cv_/";
+			
 			$sqlErrorCode = 0;
-
-			foreach ($sqlArray as $stmt) {
-				// Replace the table prefix with the choosen prefix
-				$pattern = "cv_";
-
-				if( strlen($stmt)>3 && substr( ltrim($stmt), 0, 2 ) != '/*' ){
-					$result = mysql_query( preg_replace($pattern, $dbprefix, $stmt), $connection );
+	
+			foreach ($queryArr as $query) {
+				if( strlen($query)>3 && substr( ltrim($query), 0, 2 ) != '/*' ){
+					$result = mysql_query( preg_replace($pattern, $dbprefix, $query), $connection );
+					print $result;
 					if ( !$result ) {
 						$sqlErrorCode = mysql_errno();
 						$sqlErrorText = mysql_error();
-						$sqlStmt = $stmt;
+						$sqlStmt = $query;
 						break;
 					}
 				}
 			}
+			
 			if( $sqlErrorCode == 0 ){
 				// Add the user to the database
 				$userlogin = $_POST["username"];
@@ -219,6 +208,9 @@ function editConfigFile( $host, $schema, $prefix, $user, $pass ){
 				$msg .= "Statement:<br/> $sqlStmt<br/>";
 				die( $msg );
 			}
+			
+			// Close the connection.
+			mysql_close();
 		}
 ?>
 		</table>

@@ -21,8 +21,10 @@ class Password extends CvModule {
 	
 	// Creates an form for editing user details in the database. Anything but the username and password, for now...
 	function Content(){
-		$query = "SELECT password, salt FROM cv_main WHERE username = '$_SESSION[username]'";
-		$result = mysql_query( $query ) or die ( mysql_error() );
+		global $link, $dbprefix;
+		
+		$query = "SELECT password, salt FROM " . $dbprefix . "main WHERE username = '$_SESSION[username]'";
+		$result = mysql_query( $query, $link ) or die ( mysql_error() );
 		
 		$buffer = '<form acton="$_SERVER[PHP_SELF]" method="POST"><table><tbody>';
 		while( $row = mysql_fetch_assoc($result) ){			
@@ -38,12 +40,14 @@ class Password extends CvModule {
 	}
 	
 	function POST(){
+		global $link, $dbprefix;
+		
 		if( $_POST["newpassword1"] != $_POST["newpassword2"] ){
 			$this->error[] = "New passwords don't match!";
 			return false;
 		}else{
-			$load = "SELECT password, salt FROM cv_main WHERE username = '$_SESSION[username]'";
-			$result = mysql_query( $load ) or die ( mysql_error() );
+			$load = "SELECT password, salt FROM " . $dbprefix . "main WHERE username = '$_SESSION[username]'";
+			$result = mysql_query( $load, $link ) or die ( mysql_error() );
 			$row = mysql_fetch_assoc( $result );
 			
 			// Get the new password hash

@@ -13,14 +13,14 @@
 
 include_once("config.php");
 
-global $link;
+global $link, $dbprefix;
 
 $name = "";
 $email = "";
 
 // Get the name and email
 if( checkInstalled() == true ){
-	$query = "SELECT name, email FROM cv_main ORDER BY id LIMIT 1";
+	$query = "SELECT name, email FROM " . $dbprefix . "main ORDER BY id LIMIT 1";
 	$result =  mysql_query( $query, $link ) or die ( mysql_error() );
 	
 	while( $row = mysql_fetch_assoc($result) ){

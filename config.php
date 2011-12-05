@@ -18,7 +18,7 @@ foreach( glob("modules/*.php") as $module ){
     include $module;
 }
 
-global $link, $dbhost, $dbuser, $dbpass, $dbname, $dbname_app;
+global $link, $dbprefix;
 
 if( checkInstalled() ){
 	/* If the site is installed properlly, connect to the database... */
@@ -31,7 +31,7 @@ if( checkInstalled() ){
 	$dbprefix="prefix";
 
 	// Connect to the database - using persistant connection 
-	$link = mysql_pconnect( $dbhost, $dbuser, $dbpass ) or die ( mysql_error() );
+	$link = mysql_connect( $dbhost, $dbuser, $dbpass ) or die ( mysql_error() );
 	mysql_select_db( $dbname, $link ) or die ( mysql_error() );
 }
 

@@ -16,7 +16,7 @@
 include_once("config.php");
 
 /* Use the global message array! */
-global $messages;
+global $link, $dbprefix;
 
 /* Page title */
 $title = "cv";
@@ -82,7 +82,7 @@ if( isset($_GET["print"]) ){
 
 		<section id="cv_contact" class="cv">
 		<?php
-			$query = "SELECT name, street, city, phone, email FROM cv_main ORDER BY id DESC LIMIT 1";
+			$query = "SELECT name, street, city, phone, email FROM " . $dbprefix . "main ORDER BY id DESC LIMIT 1";
 			$result = mysql_query($query, $link) or die( mysql_error() );
 			print "<table style=\"text-align:center\">";
 			while( $row = mysql_fetch_array($result, MYSQL_NUM) ){
@@ -102,7 +102,7 @@ if( isset($_GET["print"]) ){
 
 		<section id="cv_ambitions" class="cv">
 		<?php
-			$query = "SELECT ambitions FROM cv_main ORDER BY id DESC LIMIT 1";
+			$query = "SELECT ambitions FROM " . $dbprefix . "main ORDER BY id DESC LIMIT 1";
 			$result = mysql_query($query, $link) or die( mysql_error() );
 
 			print "<table style=\"text-align:justify\">";
@@ -115,7 +115,7 @@ if( isset($_GET["print"]) ){
 
 		<section id="cv_education" class="cv">
 		<?php
-			$query = "SELECT school, start, end, degree, thesisname FROM cv_education";
+			$query = "SELECT school, start, end, degree, thesisname FROM " . $dbprefix . "education";
 			$result = mysql_query($query, $link) or die( mysql_error() );
 			$numrows = mysql_num_rows( $result );
 
@@ -140,7 +140,7 @@ if( isset($_GET["print"]) ){
 
 		<section id="cv_experience" class="cv">
 		<?php
-			$query = "SELECT title, institution, organization, start, stop, description FROM cv_experience ORDER BY stop DESC, start ASC";
+			$query = "SELECT title, institution, organization, start, stop, description FROM " . $dbprefix . "experience ORDER BY stop DESC, start ASC";
 			$result = mysql_query($query, $link) or die( mysql_error() );
 			$numrows = mysql_num_rows( $result );
 
@@ -165,7 +165,7 @@ if( isset($_GET["print"]) ){
 
 		<section id="cv_works" class="cv">
 		<?php
-			$query = "SELECT publisher, institution, country, year, title, description FROM cv_works";
+			$query = "SELECT publisher, institution, country, year, title, description FROM " . $dbprefix . "works";
 			$result = mysql_query($query, $link) or die( mysql_error() );
 			$numrows = mysql_num_rows( $result );
 
@@ -191,7 +191,7 @@ if( isset($_GET["print"]) ){
 
 		<section id="cv_skills" class="cv">
 		<?php
-			$query = "SELECT title, description FROM cv_skills ORDER BY title ASC";
+			$query = "SELECT title, description FROM " . $dbprefix . "skills ORDER BY title ASC";
 			$result = mysql_query($query, $link) or die( mysql_error() );
 			$numrows = mysql_num_rows( $result );
 

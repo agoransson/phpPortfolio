@@ -31,7 +31,7 @@ class Projects extends CvModule {
 	
 	// Custom function for this module to retrieve a row from the table.
 	private function getTableRow( $row ){
-		return '<tr><td>'.$row["id"].'</td><td>'.$row["name"].'</td><td>'.$row["date"].'</td><td>'.$row["description"].'</td><td><a href="admin.php?mod='.$this->Name().'&del='.$row["id"].'">del</a></td></tr>';
+		return '<tr><td>'.$row["id"].'</td><td>'.$row["name"].'</td><td>'.$row["year"].'</td><td>'.$row["description"].'</td><td><a href="admin.php?mod='.$this->Name().'&del='.$row["id"].'">del</a></td></tr>';
 	}
 	
 	function Description(){
@@ -39,9 +39,11 @@ class Projects extends CvModule {
 	}
 	function Content(){
 		if( Login::LoggedIn() ){
+			global $link, $dbprefix;
+		
 			// List of projects
-			$query = "SELECT * FROM cv_projects";
-			$result = mysql_query( $query ) or die ( mysql_error() );
+			$query = "SELECT * FROM " . $dbprefix . "projects";
+			$result = mysql_query( $query, $link ) or die ( mysql_error() );
 			
 			$buffer = '<table>';
 			$buffer .= '<tbody>';
@@ -54,7 +56,7 @@ class Projects extends CvModule {
 			// Add new project form
 			$buffer .= '<form acton="$_SERVER[PHP_SELF]" method="POST" enctype="multipart/form-data"><table><tbody>';
 			$buffer .= '<tr><td>Project Name:</td><td><input type="text" name="name" maxlength="32"></td></tr>';
-			$buffer .= '<tr class="banded"><td>Date:</td><td><input type="text" name="date" maxlength="32"></td></tr>';
+			$buffer .= '<tr class="banded"><td>Date:</td><td><input type="text" name="year" maxlength="32"></td></tr>';
 			$buffer .= '<tr><td>Tags:</td><td><input type="text" name="tags" maxlength="128"></td></tr>';
 			$buffer .= '<tr class="banded"><td>Select thumbnail (only .PNG):</td><td><input type="file" name="file" id="file" /></td></tr>';
 			$buffer .= '<tr><td>Description:</td><td><textarea rows="5" cols="47" name="description"></textarea></td></tr>';
@@ -72,17 +74,19 @@ class Projects extends CvModule {
 		if( Login::LoggedIn() ){
 			// Delete project, this should be safe since the admin.php requires to be logged in!
 			if( isset($_GET["del"]) ){
+				global $link, $dbprefix;
+			
 				$id = mysql_real_escape_string($_GET["del"]);
 				
 				// Delete directory
-				$query = "SELECT name FROM cv_projects WHERE id='$id'";
-				$result = mysql_query( $query ) or die ( mysql_error() );
+				$query = "SELECT name FROM " . $dbprefix . "projects WHERE id='$id'";
+				$result = mysql_query( $query, $link ) or die ( mysql_error() );
 				$row = mysql_fetch_assoc($result);
 				$this->delete( "./media/".$row["name"] );
 				
 				// Delete database entry
-				$query = "DELETE FROM cv_projects WHERE id='$id'";	
-				$result = mysql_query( $query ) or die ( mysql_error() );
+				$query = "DELETE FROM " . $dbprefix . "projects WHERE id='$id'";	
+				$result = mysql_query( $query, $link ) or die ( mysql_error() );
 				
 				// Redirect:
 				header("Location: admin.php?mod=".$this->Name());
@@ -92,11 +96,13 @@ class Projects extends CvModule {
 	
 	function POST(){
 		if( Login::LoggedIn() ){
-			// Add a new project
-			$query = "INSERT INTO cv_projects (name, date, tags, description)
-					  VALUES ('$_POST[name]', '$_POST[date]', '$_POST[tags]', '$_POST[description]')";
+			global $link, $dbprefix;
 			
-			mysql_query( $query ) or die ( mysql_error() );
+			// Add a new project
+			$query = "INSERT INTO " . $dbprefix . "projects (name, year, tags, description)
+					  VALUES ('$_POST[name]', '$_POST[year]', '$_POST[tags]', '$_POST[description]')";
+			
+			mysql_query( $query, $link ) or die ( mysql_error() );
 			
 			// Create the project directory under the media folder
 			mkdir( "./media/" . $_POST["name"] );

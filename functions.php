@@ -11,9 +11,6 @@
  * Description:	Extra functions.						*
 \********************************************************/
 
-/* Use the global message array! */
-global $messages;
-
 // Start a new, or continue the old, PHP session.
 session_start();
 
@@ -39,36 +36,6 @@ function createSalt(){
 	return substr($string, 0, 3);
 }
 
-function attemptLogIn($username, $password){
-	$username = mysql_real_escape_string($username);
-
-	$query = "SELECT password, salt FROM cv_main WHERE username = '$username';";
-	$result = mysql_query( $query ) or die ( mysql_error() );
-
-	if( mysql_num_rows($result) < 1 ){
-		// No such user!
-		if( isset($_SESSION["loggedIn"]) )
-			unset( $_SESSION["loggedIn"] );
-			
-		return false;
-	}
-
-	$row = mysql_fetch_array( $result, MYSQL_ASSOC );
-	$hash = hash( "sha256", $row["salt"] . hash("sha256", $password) );
-	if( $hash != $row["password"] ){
-		// Incorrect password!
-		if( isset($_SESSION["loggedIn"]) )
-			unset( $_SESSION["loggedIn"] );
-		
-		return false;
-	}
-
-	$_SESSION["loggedIn"] = true;
-	$_SESSION["username"] = $username;
-	
-	// Logged in
-	return true;
-}
 
 function getImageList($directory){
 	// create an array to hold directory list
@@ -95,7 +62,7 @@ function getImageList($directory){
 }
 
 /* Returns a html-version of the project */
-function htmlifyProject($row){//, $index) {
+function htmlifyProject( $row ){
 	$id = $row["id"];
 	$name = $row["name"];
 	$description = $row["description"];
@@ -104,8 +71,7 @@ function htmlifyProject($row){//, $index) {
 
 	$image = $dir . "/icon.png";
 	$image_gray = str_replace( ".png", "_gray.png", $image );
-	$target = $row["target"];
-	$when = $row["date"];
+	$year = $row["year"];
 	$tags = $row["tags"];
 
 	$ret = '<div id="'.$id.'" name="'.$name.'" class="project" style="background-image: url(\''.$image_gray.'\')">';
@@ -115,7 +81,7 @@ function htmlifyProject($row){//, $index) {
 	$ret .= '</section>';
 
 	$ret .= '<section class="projectdesc">';
-	$ret .= '<p class="projectdate">'.$when.'</p>';
+	$ret .= '<p class="projectdate">'.$year.'</p>';
 	$ret .= '<p class="projecttags">'.$tags.'</p>';
 	$ret .= '</section>';
 

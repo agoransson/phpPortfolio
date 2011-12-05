@@ -16,6 +16,8 @@ include_once("config.php");
 
 $title = "portfolio";
 
+global $dbprefix, $link;
+
 if( !checkInstalled() ){
 	header( "Location: install.php" );
 }
@@ -62,10 +64,10 @@ if( !checkInstalled() ){
 
 	<!-- BEGIN SPECIFIC CONTENT -->
 	<div id="content">
-	<?php
+	<?php		
 		// TODO Create module for this?
 		if( checkInstalled() ){
-			$query = "SELECT * FROM cv_projects ORDER BY date DESC, name ASC";
+			$query = "SELECT * FROM " . $dbprefix . "projects ORDER BY year DESC, name ASC";
 			$result = mysql_query($query, $link) or die ( mysql_error() );
 			
 			while( $row = mysql_fetch_assoc($result) ){

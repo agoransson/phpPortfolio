@@ -39,14 +39,16 @@ class UploadImage extends CvModule {
 	}
 	function Content(){
 		if( Login::LoggedIn() ){
+			global $link, $dbprefix;
+			
 			// TODO list all projects in some sort of expandable/contractable view... with ability to delete files
 			// Probably needs work with JQuery, and then we need to add a script loader similar to the css loader in admin.php.
 			
 			// Add new file to project form
 			$buffer = '<form acton="$_SERVER[PHP_SELF]" method="POST" enctype="multipart/form-data"><table><tbody>';
 			$buffer .= '<tr><td>Save to project:</td><td><select name="project">';
-			$query = "SELECT name FROM cv_projects";
-			$result = mysql_query( $query ) or die ( mysql_error() );
+			$query = "SELECT name FROM " . $dbprefix . "projects";
+			$result = mysql_query( $query, $link ) or die ( mysql_error() );
 			while( $row = mysql_fetch_assoc($result) ){
 				$buffer .= '<option value="'.$row["name"].'">'.$row["name"].'</option>';
 			}
