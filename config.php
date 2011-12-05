@@ -21,21 +21,18 @@ foreach( glob("modules/*.php") as $module ){
 global $link, $dbhost, $dbuser, $dbpass, $dbname, $dbname_app;
 
 if( checkInstalled() ){
-/* If the site is installed properlly, connect to the database... */
+	/* If the site is installed properlly, connect to the database... */
 
-// Database details
-$dbhost="host";
-$dbuser="username";
-$dbpass="password";
-$dbname="phpPortfolio";
+	// Database details
+	$dbhost="host";
+	$dbuser="username";
+	$dbpass="password";
+	$dbname="schema";
+	$dbprefix="prefix";
 
-// Connect to the database - using persistant connection 
-$link = mysql_pconnect( "$dbhost", "$dbuser", "$dbpass" ) or die ( mysql_error() );
-mysql_select_db( "$dbname", $link ) or die ( mysql_error() );
-}else{
-/* ...otherwise don't do anything! */
+	// Connect to the database - using persistant connection 
+	$link = mysql_pconnect( $dbhost, $dbuser, $dbpass ) or die ( mysql_error() );
+	mysql_select_db( $dbname, $link ) or die ( mysql_error() );
 }
-
-$messages = array();
 
 ?>

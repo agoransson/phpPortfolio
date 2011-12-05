@@ -1,0 +1,35 @@
+p {
+	text-align: left;
+	font-size: 0.8em;
+	margin: 5px;
+}
+p.heading {
+	font-size: 1.0em;
+}
+
+table {
+	border: 0;
+	font-size: 0.8em;
+}
+
+td {
+	padding: 2px;
+}
+
+input {
+	padding: 0;
+	border: 0;
+	width: 100%;
+}
+
+input.button{
+	border: 1px solid #000;
+}
+
+tr{
+	background-color: #ccc;
+}
+
+tr.headingrow {
+	background-color: #999;
+}

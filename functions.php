@@ -39,36 +39,6 @@ function createSalt(){
 	return substr($string, 0, 3);
 }
 
-function register( $userlogin, $userpw1, $userpw2, $fullname, $street, $city, $country, $phone, $email ){
-	// Make sure the two passwords are the same, and that the username doesn't exeed the limit
-	if( $userpw1 != $userpw2 )
-		return false;
-	if( strlen($username) > 30 )
-		return false;
-
-	// Get the hash
-	$hash = hash( "sha256", $userpw1 );
-	
-	// Add the randomizer
-	$salt = createSalt();
-	$hash = hash( "sha256", $salt . $hash );
-
-	$_POST["salt"] = $salt;
-	$_POST["hash"] = $hash;
-	
-	// ...and make sure someone isn't trying to hack the db.
-	$username = mysql_real_escape_string($username);
-	$query = "INSERT INTO cv_main ( username, password, salt, name, street, city, country, phone, email )
-		VALUES ( '$userlogin', '$hash', '$salt', '$fullname', '$street', '$city', '$country', '$phone', '$email' );";
-		
-	if( $link )
-		mysql_query( $query, $link ) or die ( mysql_error() );
-	else
-		mysql_query( $query ) or die ( mysql_error() );
-		
-	return true;
-}
-
 function attemptLogIn($username, $password){
 	$username = mysql_real_escape_string($username);
 

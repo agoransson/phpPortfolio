@@ -42,10 +42,13 @@ switch( $title ){
 		print '<a id="trigger" href="mailto:' . $email . '">' . $name . '</a>';
 		break;
 	case "admin":
-		print '<a href="index.php" class="title">back</a>';
+		print '<a href="index.php" class="titleleft">back</a>';
+		break;
+	case "install":
+		print '<p class="titleleft">welcome</p>';
 		break;
 	default:
-		print '<a href="javascript:history.back()" class="title">back</a>';
+		print '<a href="javascript:history.back()" class="titleleft">back</a>';
 		break;
 }
 print "</div>";
@@ -58,13 +61,13 @@ if( $webkit === true ){
 }else{
 	switch( $title ){
 		case "portfolio":
-			print '<p class="title"><a href="index.php">portfolio</a>|<a class="notselected" href="cv.php">CV</a>';
+			print '<p class="titleright"><a href="index.php">portfolio</a>|<a class="notselected" href="cv.php">CV</a>';
 			break;
 		case "cv":
-			print '<p class="title"><a class="notselected" href="index.php">portfolio</a>|<a href="cv.php">CV</a>';
+			print '<p class="titleright"><a class="notselected" href="index.php">portfolio</a>|<a href="cv.php">CV</a>';
 			break;
 		default:
-			print '<p class="title">'.$title.'</p>';
+			print '<p class="titleright">'.$title.'</p>';
 			break;
 	}
 }
