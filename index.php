@@ -10,16 +10,19 @@
  *														*
  * Description:	Start page.								*
 \********************************************************/
- 
+
 /* Include the configuration file - contains the database connection */
 include_once("config.php");
 
 $title = "portfolio";
 
-global $dbprefix, $link;
+global $dbprefix;
+
 
 if( !checkInstalled() ){
 	header( "Location: install.php" );
+}else if( checkInstallFile() ){
+	die( 'Please remove, or rename, the "install.php" file' );
 }
 
 ?>
@@ -68,6 +71,7 @@ if( !checkInstalled() ){
 		// TODO Create module for this?
 		if( checkInstalled() ){
 			$query = "SELECT * FROM " . $dbprefix . "projects ORDER BY year DESC, name ASC";
+			$link = connect_to_db();
 			$result = mysql_query($query, $link) or die ( mysql_error() );
 			
 			while( $row = mysql_fetch_assoc($result) ){

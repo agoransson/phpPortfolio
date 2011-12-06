@@ -14,20 +14,44 @@
 // Start a new, or continue the old, PHP session.
 session_start();
 
-function checkInstalled(){
-	$filename = "installed.now";
-	$installscript = "install.php";
-	
-	if( file_exists($filename) ){
-		// Installed: Try to remove/rename the install script and return true.
-		if( file_exists($installscript) )
-			rename("install.php", "installphp.bak");
-		
-		return true;
-	}else{		
-		// Not installed yet: just return false
+function connect_to_db(){
+	global $link, $dbhost, $dbuser, $dbpass, $dbname;
+
+	$link = mysql_connect( $dbhost, $dbuser, $dbpass );
+	if( !$link )
 		return false;
+
+	$result = mysql_select_db( $dbname, $link );
+	if( !$result )
+		return false;
+
+	return $link;
+}
+
+function checkInstallFile(){
+	return file_exists( "install.php" );
+}
+
+function checkInstalled(){
+	global $link, $dbname, $dbprefix;
+
+	// Count number of $dbprefix tables in the database (should be 7)
+	$query = 'SHOW TABLES IN ' . $dbname;
+	$link = connect_to_db();
+	if( !$link )
+		return false;
+
+	$result = mysql_query($query,$link) or die ( mysql_error() );
+
+	$numtables = 0;
+
+	while( $table = mysql_fetch_array($result, MYSQL_NUM) ){
+
+		if( preg_match('/'.$dbprefix.'/i', $table[0]) > 0 )
+			$numtables++;
 	}
+	
+	return ($numtables == 7 ? true : false);
 }
 
 //creates a 3 character sequence

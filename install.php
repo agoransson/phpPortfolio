@@ -10,6 +10,11 @@
  *														*
  * Description:	Installation script.					*
 \********************************************************/
+include_once("config.php");
+
+if( checkInstalled() === true ){
+	die( 'Please delete, or rename, this file ("install.php"). phpPortfolio is already installed.' );
+}
 
 error_reporting(E_ERROR);
 
@@ -49,7 +54,7 @@ function register( $userlogin, $userpw1, $userpw2, $fullname, $street, $city, $c
 
 function editConfigFile( $host, $schema, $prefix, $user, $pass ){
 	// Select file
-    $file = "config.php";
+    $filename = "config.php";
 	
 	// Patterns
 	$patterns = Array();
@@ -68,11 +73,12 @@ function editConfigFile( $host, $schema, $prefix, $user, $pass ){
 	$replacements[] = '$1$2$3$4'.$prefix.'$6';
 	
 	// Edit file
-	$config = file_get_contents($file);
-	$config = preg_replace($patterns, $replacements, $config);
+	$config = file_get_contents($filename);
+	$newconfig = preg_replace($patterns, $replacements, $config);
 	
-	// Save file
-	file_put_contents($file, $config);
+	$file = fopen( $filename, 'w' );
+
+	return (fwrite( $file, $newconfig ) === false ? false : true );
 }
 ?>
 
@@ -188,18 +194,16 @@ function editConfigFile( $host, $schema, $prefix, $user, $pass ){
 				$phone = $_POST["phone"];
 				$email = $_POST["email"];
 			
-				if( register( $userlogin, $userpw1, $userpw2, $fullname, $street, $city, $country, $phone, $email ) ){
-					$filename = "installed.now";
-					$filehandle = fopen($filename, 'w+') or die ( 'Error creating file "installed.now!"' );
-					fclose($filehandle);
-				
-					header('Location: index.php');
-				}else{
+				if( !register( $userlogin, $userpw1, $userpw2, $fullname, $street, $city, $country, $phone, $email ) ){
 					die( "Error creating user" );
 				}
 			
 				// Finally, edit the config file.
-				editConfigFile( $dbhost, $dbschema, $dbprefix, $dbuser, $dbpass );
+				if( !editConfigFile( $dbhost, $dbschema, $dbprefix, $dbuser, $dbpass ) ){
+					die( 'Failed to edit file "config.php"' );
+				}
+		
+				header('Location: index.php');
 			}else{
 				// TODO print errors in the footer instead?
 				$msg = "An error occured during installation!<br/>";
