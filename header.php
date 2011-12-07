@@ -34,6 +34,14 @@ $webkit = strpos( $_SERVER['HTTP_USER_AGENT'], "AppleWebKit" );
 
 // Left side of header (message)
 print '<div id="headerleft">';
+
+$names = explode(" ", $name);
+$name = "";
+$i = 1;
+foreach( $names as $pname ){
+	$name .= $pname . ($i++ < count($names) ? "<br />" : "");
+}
+	
 switch( $title ){
 	case "portfolio":
 		print '<a id="trigger" href="mailto:' . $email . '">' . $name . '</a>';
