@@ -14,6 +14,15 @@
 // Start a new, or continue the old, PHP session.
 session_start();
 
+function printError( $err ){
+	$lines = explode( '. ', $err );
+	print '<div class="errors">';
+	foreach( $lines as $line ){
+		print '<p>'.$line.'</p>';
+	}
+	print '</div>';
+}
+
 function connect_to_db(){
 	global $link, $dbhost, $dbuser, $dbpass, $dbname;
 

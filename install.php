@@ -16,11 +16,8 @@ if( checkInstalled() === true ){
 	die( 'Please delete, or rename, this file ("install.php"). phpPortfolio is already installed.' );
 }
 
-error_reporting(E_ERROR);
-
 /* Is the user logged in? */
 $title = "install";
-
 
 function register( $userlogin, $userpw1, $userpw2, $fullname, $street, $city, $country, $phone, $email ){
 	// Make sure the two passwords are the same, and that the username doesn't exeed the limit
@@ -45,9 +42,9 @@ function register( $userlogin, $userpw1, $userpw2, $fullname, $street, $city, $c
 		VALUES ( '$userlogin', '$hash', '$salt', '$fullname', '$street', '$city', '$country', '$phone', '$email' );";
 		
 	if( $link )
-		mysql_query( $query, $connection ) or die ( mysql_error() );
+		mysql_query( $query, $connection ) or die ( printError(mysql_error()) );
 	else
-		mysql_query( $query ) or die ( mysql_error() );
+		mysql_query( $query ) or die ( printError(mysql_error()) );
 		
 	return true;
 }
@@ -171,7 +168,6 @@ function editConfigFile( $host, $schema, $prefix, $user, $pass ){
 			foreach ($queryArr as $query) {
 				if( strlen($query)>3 && substr( ltrim($query), 0, 2 ) != '/*' ){
 					$result = mysql_query( preg_replace($pattern, $dbprefix, $query), $connection );
-					print $result;
 					if ( !$result ) {
 						$sqlErrorCode = mysql_errno();
 						$sqlErrorText = mysql_error();
@@ -195,22 +191,25 @@ function editConfigFile( $host, $schema, $prefix, $user, $pass ){
 				$email = $_POST["email"];
 			
 				if( !register( $userlogin, $userpw1, $userpw2, $fullname, $street, $city, $country, $phone, $email ) ){
-					die( "Error creating user" );
+					die( printError("Error creating user") );
 				}
 			
 				// Finally, edit the config file.
 				if( !editConfigFile( $dbhost, $dbschema, $dbprefix, $dbuser, $dbpass ) ){
-					die( 'Failed to edit file "config.php"' );
+					if( !chmod( "config.php", 0777 ) )
+						die( printError('Failed to edit file "config.php" - I tried changing the permission myself but failed. Could you help me please? Set the "config.php" file to mode 0777 and then try to install again') );
 				}
-		
-				header('Location: index.php');
+
+				// If we get here without any errors, we're all set! Just tell the user to delete the install.php and chmod the config.
+				if( !chmod("config.php", 0755) )
+					die( printError('I tried changing the "config.php" file back to more appropriate permissions, but failed. Give me a hand please, set it to mode 0755 please.') );
 			}else{
 				// TODO print errors in the footer instead?
-				$msg = "An error occured during installation!<br/>";
-				$msg .= "Error code: $sqlErrorCode<br/>";
-				$msg .= "Error text: $sqlErrorText<br/>";
-				$msg .= "Statement:<br/> $sqlStmt<br/>";
-				die( $msg );
+				$msg = "An error occured during installation!. ";
+				$msg .= "Error code: $sqlErrorCode. ";
+				$msg .= "Error text: $sqlErrorText. ";
+				$msg .= "Statement:. $sqlStmt. ";
+				die( printError($msg) );
 			}
 			
 			// Close the connection.

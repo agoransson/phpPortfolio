@@ -22,7 +22,7 @@ global $dbprefix;
 if( !checkInstalled() ){
 	header( "Location: install.php" );
 }else if( checkInstallFile() ){
-	die( 'Please remove, or rename, the "install.php" file' );
+	die( printError('Please remove, or rename, the "install.php" file') );
 }
 
 ?>

@@ -104,7 +104,7 @@ p.infotext{
 	padding-right: 50px;
 }
 
-#errors{
+.errors{
 	text-align: center;
 	font-weight: normal;
 	font-size: 1.0em;
