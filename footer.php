@@ -17,7 +17,7 @@ global $messages;
 if( isset($modules) ){
 	foreach( $modules as $mod ){
 		if( $mod->Error() ) {
-			print '<div id="errors">';
+			print '<div class="errors">';
 			print ( isset($_GET["mod"]) && get_class($mod) === $_GET["mod"] ? $mod->Error() : "" );
 			print "</div>";
 		}

@@ -26,8 +26,6 @@ function deleteTables(){
 
 	$result = mysql_select_db( $dbname, $link ) or die ( mysql_error() );
 
-
-	
 	$query = "SHOW TABLES IN $dbname LIKE '$dbprefix%'";
 		
 	$result = mysql_query( $query, $link );
@@ -82,7 +80,7 @@ function register( $username, $userpw1, $userpw2, $fullname, $street, $city, $co
 	// ...and make sure someone isn't trying to hack the db.
 	$username = mysql_real_escape_string($username);
 	$query = "INSERT INTO " . $_POST["dbprefix"] . "main ( username, password, salt, name, street, city, country, phone, email )
-		VALUES ( '$userlogin', '$hash', '$salt', '$fullname', '$street', '$city', '$country', '$phone', '$email' );";
+		VALUES ( '$username', '$hash', '$salt', '$fullname', '$street', '$city', '$country', '$phone', '$email' );";
 	
 	return mysql_query( $query, $link );
 }
