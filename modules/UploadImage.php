@@ -88,7 +88,7 @@ class UploadImage extends CvModule {
 						
 						$image = new SimpleImage();						
 						$image->load( "./media/".$_POST["project"]."/".$_FILES["file"]["name"] );
-						$image->resize( 810, 550 );
+						$image->resize( 810, 500 );
 						$image->save( "./media/".$_POST["project"]."/".$_FILES["file"]["name"] );
 					}
 				}

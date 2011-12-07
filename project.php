@@ -14,6 +14,11 @@
 /* Include the configuration file - contains the database connection */
 include_once("config.php");
 
+global $dbprefix, $link;
+
+if( !$link )
+	$link = connect_to_db();
+
 /* Use the global message array! */
 global $messages;
 
@@ -30,8 +35,9 @@ if (isset($_POST["login"])) {
 }
 
 /* Load project from db */
-$query = "SELECT * FROM cv_projects WHERE id = " . $id;
-$result = mysql_query($query, $link);
+$query = "SELECT * FROM " . $dbprefix."projects WHERE id = " . $id;
+$result = mysql_query($query, $link) or die ( mysql_error() );
+
 if( $row = mysql_fetch_assoc($result) ){
 	$name = $row["name"];
 	$gallery = $row["gallery"];
@@ -101,8 +107,7 @@ $title = $name;
 
 			$files = getImageList( $dir );
 			for( $i = 0; $i < count($files); $i++ ){
-				$file = preg_replace( "{\?}i", "", $files[$i] );
-				
+				$file = preg_replace( "{\?}i", "", $files[$i] );			
 				if( strpos($file,"icon") === false ){
 					print "<li><img src=\"" . $dir . "/" . $file . "\" alt=\"" . $file . "\" /></li>";
 				}

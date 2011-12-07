@@ -74,7 +74,7 @@ function getImageList($directory){
 		// if file isn't this directory or its parent, add it to the results
 		if( $file != "." && $file != ".." ){
 			// Make sure only images (jpg, png, gif, etc.) are accepted
-			if( preg_match("/\.(jpg|png|bmp)$/i", $file) )
+			if( preg_match("/[a-zA-Z0-9_]+\.(jpg|png|bmp)$/i", $file) )
 				$results[] = $file;
 		}
 	}

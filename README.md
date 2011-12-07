@@ -15,3 +15,7 @@
 
 ## Changes
 * 2011-12-05 Portfolio part of the website is done.
+
+## Known Bugs
+* config.php permissions might need to be set manually
+* ./media/ directory needs to have the permissions set to 755 - the script won't even try right now.
