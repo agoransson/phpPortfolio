@@ -12,19 +12,62 @@
 \********************************************************/
 include_once("config.php");
 
+/* Is the user logged in? */
+$title = "install";
+
 if( checkInstalled() === true ){
 	die( 'Please delete, or rename, this file ("install.php"). phpPortfolio is already installed.' );
 }
 
-/* Is the user logged in? */
-$title = "install";
+function deleteTables(){
+	global $dbhost, $dbname, $dbuser, $dbpass, $dbprefix;
 
-function register( $userlogin, $userpw1, $userpw2, $fullname, $street, $city, $country, $phone, $email ){
+	$link = mysql_connect( $dbhost, $dbuser, $dbpass ) or die ( mysql_error() );
+
+	$result = mysql_select_db( $dbname, $link ) or die ( mysql_error() );
+
+
+	
+	$query = "SHOW TABLES IN $dbname LIKE '$dbprefix%'";
+		
+	$result = mysql_query( $query, $link );
+	
+	if( !$result )
+		return mysql_error();
+
+	$numtables = mysql_num_rows($result);
+
+	if( $numtables > 0 ){
+		$query = "DROP TABLE IF EXISTS ";
+
+		$i = 1;
+		while( $row = mysql_fetch_array( $result ) ){
+			$query .= $row[0] . ($i++<$numtables?", ":"");
+		}
+
+		$result = mysql_query( $query, $link );
+
+		if( !$result )
+			return mysql_error();
+
+	}else{
+		return "No tables found with prefix $dbprefix";
+	}
+
+	return true;
+}
+
+function register( $username, $userpw1, $userpw2, $fullname, $street, $city, $country, $phone, $email ){
+	global $link;
+	$errors = "";
 	// Make sure the two passwords are the same, and that the username doesn't exeed the limit
 	if( $userpw1 != $userpw2 )
-		return false;
+		$errors .= "The user passwords don't match. ";
 	if( strlen($username) > 30 )
-		return false;
+		$errors .= "The username is too long. ";
+
+	if( strlen($errors) > 0 )
+		return $errors;
 
 	// Get the hash
 	$hash = hash( "sha256", $userpw1 );
@@ -40,13 +83,8 @@ function register( $userlogin, $userpw1, $userpw2, $fullname, $street, $city, $c
 	$username = mysql_real_escape_string($username);
 	$query = "INSERT INTO " . $_POST["dbprefix"] . "main ( username, password, salt, name, street, city, country, phone, email )
 		VALUES ( '$userlogin', '$hash', '$salt', '$fullname', '$street', '$city', '$country', '$phone', '$email' );";
-		
-	if( $link )
-		mysql_query( $query, $connection ) or die ( printError(mysql_error()) );
-	else
-		mysql_query( $query ) or die ( printError(mysql_error()) );
-		
-	return true;
+	
+	return mysql_query( $query, $link );
 }
 
 function editConfigFile( $host, $schema, $prefix, $user, $pass ){
@@ -189,9 +227,16 @@ function editConfigFile( $host, $schema, $prefix, $user, $pass ){
 				$country = $_POST["country"];
 				$phone = $_POST["phone"];
 				$email = $_POST["email"];
-			
-				if( !register( $userlogin, $userpw1, $userpw2, $fullname, $street, $city, $country, $phone, $email ) ){
-					die( printError("Error creating user") );
+
+				$reg = register( $userlogin, $userpw1, $userpw2, $fullname, $street, $city, $country, $phone, $email );
+				
+				if( $reg !== true ){
+					// User registration failed, delete the created tables and abort.
+					$del = deleteTables();
+					if( $del !== true )
+						die( printError($reg) . ". " . printError($del) );
+
+					die( printError($reg) );
 				}
 			
 				// Finally, edit the config file.
@@ -200,7 +245,7 @@ function editConfigFile( $host, $schema, $prefix, $user, $pass ){
 						die( printError('Failed to edit file "config.php" - I tried changing the permission myself but failed. Could you help me please? Set the "config.php" file to mode 0777 and then try to install again') );
 				}
 
-				// If we get here without any errors, we're all set! Just tell the user to delete the install.php and chmod the config.
+				// If we get here without any errors, we're all set! Almost...
 				if( !chmod("config.php", 0755) )
 					die( printError('I tried changing the "config.php" file back to more appropriate permissions, but failed. Give me a hand please, set it to mode 0755 please.') );
 			}else{

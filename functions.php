@@ -45,22 +45,14 @@ function checkInstalled(){
 	global $link, $dbname, $dbprefix;
 
 	// Count number of $dbprefix tables in the database (should be 7)
-	$query = 'SHOW TABLES IN ' . $dbname;
+	$query = "SHOW TABLES IN $dbname LIKE '$dbprefix%'";
 	$link = connect_to_db();
 	if( !$link )
 		return false;
 
 	$result = mysql_query($query,$link) or die ( mysql_error() );
-
-	$numtables = 0;
-
-	while( $table = mysql_fetch_array($result, MYSQL_NUM) ){
-
-		if( preg_match('/'.$dbprefix.'/i', $table[0]) > 0 )
-			$numtables++;
-	}
 	
-	return ($numtables == 7 ? true : false);
+	return (mysql_num_rows($result) == 7 ? true : false);
 }
 
 //creates a 3 character sequence
