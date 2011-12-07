@@ -239,13 +239,23 @@ function editConfigFile( $host, $schema, $prefix, $user, $pass ){
 			
 				// Finally, edit the config file.
 				if( !editConfigFile( $dbhost, $dbschema, $dbprefix, $dbuser, $dbpass ) ){
-					if( !chmod( "config.php", 0777 ) )
-						die( printError('Failed to edit file "config.php" - I tried changing the permission myself but failed. Could you help me please? Set the "config.php" file to mode 0777 and then try to install again') );
+					if( !chmod( "config.php", 0777 ) ){
+						$errmsg = 'Failed to edit file "config.php" - I tried changing the permission myself but failed. Could you help me please? Set the "config.php" file to mode 0777 and then press refresh please';
+
+						$del = deleteTables();
+						if( $del !== true )
+							die( printError($errmsg) . ". " . printError($del) );
+
+						die( printError($errmsg) );
+					}
 				}
 
 				// If we get here without any errors, we're all set! Almost...
-				if( !chmod("config.php", 0755) )
-					die( printError('I tried changing the "config.php" file back to more appropriate permissions, but failed. Give me a hand please, set it to mode 0755 please.') );
+				if( !chmod("config.php", 0755) ){
+					$errmsg = 'I tried changing the "config.php" file back to more appropriate permissions, but failed. Give me a hand please, set it to mode 0755 please.';
+
+					die( printError($errmsg) );
+				}
 			}else{
 				// TODO print errors in the footer instead?
 				$msg = "An error occured during installation!. ";
