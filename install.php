@@ -57,10 +57,12 @@ function deleteTables(){
 
 function register( $username, $userpw1, $userpw2, $fullname, $street, $city, $country, $phone, $email ){
 	global $link;
+
 	$errors = "";
 	// Make sure the two passwords are the same, and that the username doesn't exeed the limit
 	if( $userpw1 != $userpw2 )
 		$errors .= "The user passwords don't match. ";
+
 	if( strlen($username) > 30 )
 		$errors .= "The username is too long. ";
 
@@ -82,7 +84,7 @@ function register( $username, $userpw1, $userpw2, $fullname, $street, $city, $co
 	$query = "INSERT INTO " . $_POST["dbprefix"] . "main ( username, password, salt, name, street, city, country, phone, email )
 		VALUES ( '$username', '$hash', '$salt', '$fullname', '$street', '$city', '$country', '$phone', '$email' );";
 	
-	return mysql_query( $query, $link );
+	return mysql_query( $query, $link ) or die ( "Error registering user: " . mysql_error() );
 }
 
 function editConfigFile( $host, $schema, $prefix, $user, $pass ){
@@ -191,8 +193,8 @@ function editConfigFile( $host, $schema, $prefix, $user, $pass ){
 			$dbpass = $_POST["dbpassword"];
 			$dbprefix = $_POST["dbprefix"];
 			
-			$connection = mysql_connect( $dbhost, $dbuser, $dbpass ) or die ( "Error connecting to database: " . mysql_error() );
-			mysql_select_db( $dbschema, $connection ) or die ( "Error selecting schema: " . mysql_error() );
+			$connection = mysql_connect( $dbhost, $dbuser, $dbpass ) or die ( "#1 Error connecting to database: " . mysql_error() );
+			mysql_select_db( $dbschema, $connection ) or die ( "#2 Error selecting schema: " . mysql_error() );
 			
 			// Execute the SQL script
 			$sqlfile = file_get_contents( "database.sql" );
@@ -200,7 +202,7 @@ function editConfigFile( $host, $schema, $prefix, $user, $pass ){
 			$pattern = "/cv_/";
 			
 			$sqlErrorCode = 0;
-	
+
 			foreach ($queryArr as $query) {
 				if( strlen($query)>3 && substr( ltrim($query), 0, 2 ) != '/*' ){
 					$result = mysql_query( preg_replace($pattern, $dbprefix, $query), $connection );
@@ -226,6 +228,8 @@ function editConfigFile( $host, $schema, $prefix, $user, $pass ){
 				$phone = $_POST["phone"];
 				$email = $_POST["email"];
 
+				connect_to_db();
+
 				$reg = register( $userlogin, $userpw1, $userpw2, $fullname, $street, $city, $country, $phone, $email );
 				
 				if( $reg !== true ){
@@ -238,7 +242,7 @@ function editConfigFile( $host, $schema, $prefix, $user, $pass ){
 				}
 			
 				// Finally, edit the config file.
-				if( !editConfigFile( $dbhost, $dbschema, $dbprefix, $dbuser, $dbpass ) ){
+				if( !editConfigFile( $dbhost, $dbname, $dbprefix, $dbuser, $dbpass ) ){
 					if( !chmod( "config.php", 0777 ) ){
 						$errmsg = 'Failed to edit file "config.php" - I tried changing the permission myself but failed. Could you help me please? Set the "config.php" file to mode 0777 and then press refresh please';
 
