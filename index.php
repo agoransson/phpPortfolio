@@ -16,7 +16,7 @@ include_once("config.php");
 
 $title = "portfolio";
 
-global $dbprefix;
+global $link, $dbprefix;
 
 
 if( !checkInstalled() ){
@@ -71,9 +71,7 @@ if( !checkInstalled() ){
 		// TODO Create module for this?
 		if( checkInstalled() ){
 			$query = "SELECT * FROM " . $dbprefix . "projects ORDER BY year DESC, name ASC";
-			$link = connect_to_db();
-			$result = mysql_query($query, $link) or die ( mysql_error() );
-			
+			$result = mysql_query($query, $link) or die ( mysql_error() );			
 			while( $row = mysql_fetch_assoc($result) ){
 				print htmlifyProject($row);
 			}

@@ -11,8 +11,6 @@
  * Description:	Footer script.							*
 \********************************************************/
 
-global $messages;
-
 // Errors
 if( isset($modules) ){
 	foreach( $modules as $mod ){
