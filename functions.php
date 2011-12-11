@@ -95,8 +95,10 @@ function htmlifyProject( $row ){
 	$year = $row["year"];
 	$tags = $row["tags"];
 
-	$ret = '<div id="'.$id.'" name="'.$name.'" class="project" style="background-image: url(\''.$image_gray.'\')">';
+	$ret = '<div id="'.$id.'" name="'.$name.'" class="project" style="background-image: url(\''.$image.'\')">';
 	
+	$ret .= '<img src="'.$image_gray.'" alt="Icon" class="greyscale" />';
+
 	$ret .= '<section class="projecttitle">';	
 	$ret .= '<p class="projectname">'.$name.'</p>';	
 	$ret .= '</section>';
