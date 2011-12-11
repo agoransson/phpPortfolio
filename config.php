@@ -13,7 +13,7 @@
 
 include_once("functions.php");
 
-global $dbprefix, $dbname, $dbuser, $dbpass, $dbhost;
+global $link, $dbprefix, $dbname, $dbuser, $dbpass, $dbhost;
 
 // Include all modules
 foreach( glob("modules/*.php") as $module ){
@@ -26,5 +26,8 @@ $dbuser="user";
 $dbpass="pass";
 $dbname="schema";
 $dbprefix="prefix";
+
+// Try to connect, might not work since it might not be installed yet
+$link = connect_to_db( $dbhost, $dbuser, $dbpass, $dbname );
 
 ?>
