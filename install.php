@@ -19,13 +19,7 @@ if( checkInstalled() === true ){
 	die( 'Please delete, or rename, this file ("install.php"). phpPortfolio is already installed.' );
 }
 
-function deleteTables(){
-	global $dbhost, $dbname, $dbuser, $dbpass, $dbprefix;
-
-	$link = mysql_connect( $dbhost, $dbuser, $dbpass ) or die ( mysql_error() );
-
-	$result = mysql_select_db( $dbname, $link ) or die ( mysql_error() );
-
+function deleteTables($link, $dbname, $dbprefix){
 	$query = "SHOW TABLES IN $dbname LIKE '$dbprefix%'";
 		
 	$result = mysql_query( $query, $link );
@@ -55,22 +49,20 @@ function deleteTables(){
 	return true;
 }
 
-function register( $username, $userpw1, $userpw2, $fullname, $street, $city, $country, $phone, $email ){
-	global $link;
-
+function register( $link, $user ){ //username, $userpw1, $userpw2, $fullname, $street, $city, $country, $phone, $email ){
 	$errors = "";
 	// Make sure the two passwords are the same, and that the username doesn't exeed the limit
-	if( $userpw1 != $userpw2 )
+	if( $user["password1"] != $user["password2"] )
 		$errors .= "The user passwords don't match. ";
 
-	if( strlen($username) > 30 )
+	if( strlen($user["fullname"]) > 30 )
 		$errors .= "The username is too long. ";
 
 	if( strlen($errors) > 0 )
 		return $errors;
 
 	// Get the hash
-	$hash = hash( "sha256", $userpw1 );
+	$hash = hash( "sha256", $user["password1"] );
 	
 	// Add the randomizer
 	$salt = createSalt();
@@ -78,13 +70,13 @@ function register( $username, $userpw1, $userpw2, $fullname, $street, $city, $co
 
 	$_POST["salt"] = $salt;
 	$_POST["hash"] = $hash;
-	
+
 	// ...and make sure someone isn't trying to hack the db.
-	$username = mysql_real_escape_string($username);
+	$username = mysql_real_escape_string($user["username"]);
 	$query = "INSERT INTO " . $_POST["dbprefix"] . "main ( username, password, salt, name, street, city, country, phone, email )
-		VALUES ( '$username', '$hash', '$salt', '$fullname', '$street', '$city', '$country', '$phone', '$email' );";
-	
-	return mysql_query( $query, $link ) or die ( "Error registering user: " . mysql_error() );
+		VALUES ( '$username', '$hash', '$salt', '$user[fullname]', '$user[street]', '$user[city]', '$user[country]', '$user[phone]', '$user[email]' );";
+
+	return mysql_query( $query, $link );
 }
 
 function editConfigFile( $host, $schema, $prefix, $user, $pass ){
@@ -93,10 +85,10 @@ function editConfigFile( $host, $schema, $prefix, $user, $pass ){
 	
 	// Patterns
 	$patterns = Array();
-	$patterns[] = '/(\s+)(\$)(dbhost)(=")(\w+)(";)/';
-	$patterns[] = '/(\s+)(\$)(dbuser)(=")(\w+)(";)/';
-	$patterns[] = '/(\s+)(\$)(dbpass)(=")(\w+)(";)/';
-	$patterns[] = '/(\s+)(\$)(dbname)(=")(\w+)(";)/';
+	$patterns[] = '/(\s+)(\$)(dbhost)(=")(\w+)*(";)/';
+	$patterns[] = '/(\s+)(\$)(dbuser)(=")(\w+)*(";)/';
+	$patterns[] = '/(\s+)(\$)(dbpass)(=")(\w+)*(";)/';
+	$patterns[] = '/(\s+)(\$)(dbname)(=")(\w+)*(";)/';
 	$patterns[] = '/(\s+)(\$)(dbprefix)(=")(\w+)(";)/';
 
 	// Replacements
@@ -165,7 +157,7 @@ function editConfigFile( $host, $schema, $prefix, $user, $pass ){
 <?php
 		if( !isset($_POST["create"]) ){
 			// Enter login details
-			print '<tr class="headingrow"><td colspan="2"><p class="heading">Create your user</p></td></tr>';
+			print '<tr class="headingrow"><td colspan="2"><p class="heading">Create your user jCR5243n</p></td></tr>';
 			print '<tr><td>login:</td><td><input type="text" name="username" placeholder="username" /></td></tr>';
 			print '<tr><td>password:</td><td><input type="password" name="password1" placeholder="password" /></td></tr>';
 			print '<tr><td>password (again):</td><td><input type="password" name="password2" placeholder="password again" /></td></tr>';
@@ -187,14 +179,20 @@ function editConfigFile( $host, $schema, $prefix, $user, $pass ){
 			print '<tr><td colspan="2"><input class="button" name="create" type="submit" value="Create"></td></tr>';
 		}else{
 			// SQL Server values
-			$dbhost = $_POST["dbhost"];
-			$dbschema = $_POST["dbschema"];
-			$dbuser = $_POST["dbusername"];
-			$dbpass = $_POST["dbpassword"];
-			$dbprefix = $_POST["dbprefix"];
+			//$dbhost = $_POST["dbhost"];
+			//$dbschema = $_POST["dbschema"];
+			//$dbuser = $_POST["dbusername"];
+			//$dbpass = $_POST["dbpassword"];
 			
-			$connection = mysql_connect( $dbhost, $dbuser, $dbpass ) or die ( "#1 Error connecting to database: " . mysql_error() );
-			mysql_select_db( $dbschema, $connection ) or die ( "#2 Error selecting schema: " . mysql_error() );
+			//$connection = mysql_connect( $dbhost, $dbuser, $dbpass ) or die ( "#1 Error connecting to database: " . mysql_error() );
+			//mysql_select_db( $dbschema, $connection ) or die ( "#2 Error selecting schema: " . mysql_error() );
+
+			$link = connect_to_db($_POST["dbhost"], $_POST["dbusername"], $_POST["dbpassword"], $_POST["dbschema"] );
+
+			if( $link != true )
+				die( "Failed to connect to database" );
+
+			$dbprefix = $_POST["dbprefix"];
 			
 			// Execute the SQL script
 			$sqlfile = file_get_contents( "database.sql" );
@@ -205,7 +203,7 @@ function editConfigFile( $host, $schema, $prefix, $user, $pass ){
 
 			foreach ($queryArr as $query) {
 				if( strlen($query)>3 && substr( ltrim($query), 0, 2 ) != '/*' ){
-					$result = mysql_query( preg_replace($pattern, $dbprefix, $query), $connection );
+					$result = mysql_query( preg_replace($pattern, $dbprefix, $query), $link );
 					if ( !$result ) {
 						$sqlErrorCode = mysql_errno();
 						$sqlErrorText = mysql_error();
@@ -217,20 +215,18 @@ function editConfigFile( $host, $schema, $prefix, $user, $pass ){
 			
 			if( $sqlErrorCode == 0 ){
 				// Add the user to the database
-				$userlogin = $_POST["username"];
-				$userpw1 = $_POST["password1"];
-				$userpw2 = $_POST["password2"];
-			
-				$fullname = $_POST["fullname"];
-				$street = $_POST["street"];
-				$city = $_POST["city"];
-				$country = $_POST["country"];
-				$phone = $_POST["phone"];
-				$email = $_POST["email"];
+				$user = array();
+				$user["username"] = $_POST["username"];
+				$user["password1"] = $_POST["password1"];
+				$user["password2"] = $_POST["password2"];
+				$user["fullname"] = $_POST["fullname"];
+				$user["street"] = $_POST["street"];
+				$user["city"] = $_POST["city"];
+				$user["country"] = $_POST["country"];
+				$user["phone"] = $_POST["phone"];
+				$user["email"] = $_POST["email"];
 
-				connect_to_db();
-
-				$reg = register( $userlogin, $userpw1, $userpw2, $fullname, $street, $city, $country, $phone, $email );
+				$reg = register( $link, $user); //, $userlogin, $userpw1, $userpw2, $fullname, $street, $city, $country, $phone, $email );
 				
 				if( $reg !== true ){
 					// User registration failed, delete the created tables and abort.
@@ -242,7 +238,7 @@ function editConfigFile( $host, $schema, $prefix, $user, $pass ){
 				}
 			
 				// Finally, edit the config file.
-				if( !editConfigFile( $dbhost, $dbname, $dbprefix, $dbuser, $dbpass ) ){
+				if( !editConfigFile( $_POST["dbhost"], $_POST["dbschema"], $dbprefix, $_POST["dbusername"], $_POST["dbpassword"] ) ){
 					if( !chmod( "config.php", 0777 ) ){
 						$errmsg = 'Failed to edit file "config.php" - I tried changing the permission myself but failed. Could you help me please? Set the "config.php" file to mode 0777 and then press refresh please';
 
@@ -256,7 +252,7 @@ function editConfigFile( $host, $schema, $prefix, $user, $pass ){
 
 				// If we get here without any errors, we're all set! Almost...
 				if( !chmod("config.php", 0755) ){
-					$errmsg = 'I tried changing the "config.php" file back to more appropriate permissions, but failed. Give me a hand please, set it to mode 0755 please.';
+					$errmsg = 'Installation was a success, but when I tried changing the "config.php" file back to more appropriate permissions I failed. Could you give me a hand please, set it to mode 0755 please.';
 
 					die( printError($errmsg) );
 				}

@@ -23,14 +23,14 @@ function printError( $err ){
 	print '</div>';
 }
 
-function connect_to_db(){
-	global $link, $dbhost, $dbuser, $dbpass, $dbname;
-
+function connect_to_db($dbhost, $dbuser, $dbpass, $dbname){
 	$link = mysql_connect( $dbhost, $dbuser, $dbpass );
+
 	if( !$link )
 		return false;
 
 	$result = mysql_select_db( $dbname, $link );
+
 	if( !$result )
 		return false;
 
@@ -42,16 +42,13 @@ function checkInstallFile(){
 }
 
 function checkInstalled(){
-	global $link, $dbname, $dbprefix;
+	global $link, $dbprefix, $dbname;
 
 	// Count number of $dbprefix tables in the database (should be 7)
 	$query = "SHOW TABLES IN $dbname LIKE '$dbprefix%'";
-	$link = connect_to_db();
-	if( !$link )
-		return false;
 
-	$result = mysql_query($query,$link) or die ( mysql_error() );
-	
+	$result = mysql_query( $query, $link );
+
 	return (mysql_num_rows($result) == 7 ? true : false);
 }
 
@@ -60,7 +57,6 @@ function createSalt(){
 	$string = md5(uniqid(rand(), true));
 	return substr($string, 0, 3);
 }
-
 
 function getImageList($directory){
 	// create an array to hold directory list
