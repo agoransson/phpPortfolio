@@ -157,7 +157,7 @@ function editConfigFile( $host, $schema, $prefix, $user, $pass ){
 <?php
 		if( !isset($_POST["create"]) ){
 			// Enter login details
-			print '<tr class="headingrow"><td colspan="2"><p class="heading">Create your user jCR5243n</p></td></tr>';
+			print '<tr class="headingrow"><td colspan="2"><p class="heading">Create your user</p></td></tr>';
 			print '<tr><td>login:</td><td><input type="text" name="username" placeholder="username" /></td></tr>';
 			print '<tr><td>password:</td><td><input type="password" name="password1" placeholder="password" /></td></tr>';
 			print '<tr><td>password (again):</td><td><input type="password" name="password2" placeholder="password again" /></td></tr>';
