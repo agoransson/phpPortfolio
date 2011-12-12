@@ -42,7 +42,7 @@ if( $row = mysql_fetch_assoc($result) ){
 	$name = $row["name"];
 	$gallery = $row["gallery"];
 	$desc = $row["description"];
-	$when = $row["date"];
+	$year = $row["year"];
 	$for = $row["target"];
 }
 
@@ -63,9 +63,11 @@ $title = $name;
 	if($webkit === true){
 		print "<link rel=\"stylesheet\" type=\"text/css\" href=\"./css/desktop.css\">";
 		print "<link rel=\"stylesheet\" type=\"text/css\" href=\"./css/gallery.css\">";
+		print "<link rel=\"stylesheet\" type=\"text/css\" href=\"./css/project.css\">";
 	}else{
 		print "<link rel=\"stylesheet\" type=\"text/css\" href=\"./css/desktop.css\">";
 		print "<link rel=\"stylesheet\" type=\"text/css\" href=\"./css/gallery.css\">";
+		print "<link rel=\"stylesheet\" type=\"text/css\" href=\"./css/project.css\">";
 	}
 ?>
 
@@ -119,7 +121,7 @@ $title = $name;
 	<div id="projectinfo">
 		<?php 
 		print "<h2>" . $title . "</h2>";
-		print "<h4>" . $when . "</h4>";
+		print "<h4>(" . $year . ")</h4>";
 		print "<h4>" . $for . "</h4>";
 		$strings = explode( "\n", $desc );
 		for( $i = 0; $i < count($strings); $i++ )
