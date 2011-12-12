@@ -83,13 +83,13 @@ table.reference td {
 
 .projectdesc{
 	position:absolute;
-	top: 0px; left: 0px; 
+	top: 160px; left: 0px; 
 	z-index: 2; 
 	width: 200px;
 
-	/*text-align: left;*/
+	/*text-align: left;
 	margin-top: 137px;
-	/*padding-left: 5px;
+	padding-left: 5px;
 	padding-top: 3px;
 	padding-bottom: 3px;*/
 	padding-top: 5px;

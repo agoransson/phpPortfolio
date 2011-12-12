@@ -58,9 +58,10 @@ class Projects extends CvModule {
 			$buffer .= '<tr><td>Project Name:</td><td><input type="text" name="name" maxlength="32"></td></tr>';
 			$buffer .= '<tr class="banded"><td>Date:</td><td><input type="text" name="year" maxlength="32"></td></tr>';
 			$buffer .= '<tr><td>Tags:</td><td><input type="text" name="tags" maxlength="128"></td></tr>';
-			$buffer .= '<tr class="banded"><td>Select thumbnail (only .PNG):</td><td><input type="file" name="file" id="file" /></td></tr>';
-			$buffer .= '<tr><td>Description:</td><td><textarea rows="5" cols="47" name="description"></textarea></td></tr>';
-			$buffer .= '<tr class="banded"><td colspan="2"><input name="' . $this->Name() . '" type="submit" value="Save new project" /></td></tr>';
+			$buffer .= '<tr class="banded"><td>Select thumbnail (only .PNG):</td><td><input type="file" name="icon" id="icon" /></td></tr>';
+			$buffer .= '<tr><td>Desaturated version:</td><td><input type="file" name="icon_gray" id="icon_gray" /></td></tr>';
+			$buffer .= '<tr class="banded"><td>Description:</td><td><textarea rows="5" cols="47" name="description"></textarea></td></tr>';
+			$buffer .= '<tr><td colspan="2"><input name="' . $this->Name() . '" type="submit" value="Save new project" /></td></tr>';
 			
 			// TODO icon file upload! 
 			$buffer .= '</tbody></table></form>';
@@ -102,38 +103,56 @@ class Projects extends CvModule {
 			$query = "INSERT INTO " . $dbprefix . "projects (name, year, tags, description)
 					  VALUES ('$_POST[name]', '$_POST[year]', '$_POST[tags]', '$_POST[description]')";
 			
-			mysql_query( $query, $link ) or die ( mysql_error() );
+			// TODO: This should only execute if all other things are a success... move this later...
+			mysql_query( $query, $link );
 			
 			// Create the project directory under the media folder
-			mkdir( "./media/" . $_POST["name"] );
-			
-			// Upload the icon file (200x200px thumb for the frontpage)
-			// If the file is too big or too small, resize it to 200x200.
-			// Also create a desaturated version of the image.
-			// Rename the image to icon.png and 
-			if( (($_FILES["file"]["type"] == "image/png")) && ($_FILES["file"]["size"] < 800000)){
-				if ($_FILES["file"]["error"] > 0){
-					$this->error[] = "Error: " . $_FILES["file"]["error"];
-				}else{						
-					if( file_exists("upload/" . $_FILES["file"]["name"]) ){
-						$this->error[] = $_FILES["file"]["name"] . " already exists. ";
-					}else{
-						move_uploaded_file( $_FILES["file"]["tmp_name"], "media/".$_POST["name"]."/".$_FILES["file"]["name"] );
-						rename( "media/".$_POST["name"]."/".$_FILES["file"]["name"], "./media/".$_POST["name"]."/icon.png" );
-						
-						$image = new SimpleImage();						
-						$image->load( "./media/".$_POST["name"]."/icon.png" );
-						$image->resize( 200, 200 );
-						$image->save( "./media/".$_POST["name"]."/icon.png" );
-						
-						$imagegray = ImageCreateFromString(file_get_contents('./media/'.$_POST["name"].'/icon.png'));
-						ImageFilter($imagegray, IMG_FILTER_GRAYSCALE);
-						ImagePNG($imagegray, './media/'.$_POST["name"].'/icon_gray.png');
-						ImageDestroy($imagegray);
+			$ret = mkdir( "./media/" . $_POST["name"] );
+			if( !$ret )
+				$this->error[] = "I tried to create the project folder, but failed. Could you set the permissions on ./media/ folder to 775 please?";
+			else{
+				// Upload the icon file (200x200px thumb for the frontpage)
+				// If the file is too big or too small, resize it to 200x200.
+				// Also create a desaturated version of the image.
+				// Rename the image to icon.png and 
+				if( ($_FILES["icon"]["type"] == "image/png") && ($_FILES["icon"]["size"] < 800000)){
+					$filename = $_FILES["icon"]["name"];
+					$path = "media/".$_POST["name"]."/";
+					$iconname = "icon.png";
+
+					if ($_FILES["icon"]["error"] > 0){
+						$this->error[] = "Error: " . $_FILES["icon"]["error"];
+					}else{						
+						if( file_exists("upload/" . $filename) ){
+							$this->error[] = $filename . " already exists. ";
+						}else{
+							move_uploaded_file( $_FILES["icon"]["tmp_name"], $path.$filename );
+							rename( $path.$filename, $path.$iconname );
+						}
 					}
+				}else{
+					$this->error[] = "Invalid file in icon";
 				}
-			}else{
-				$this->error[] = "Invalid file";
+				// Grayscale version
+				if( ($_FILES["icon_gray"]["type"] == "image/png") && ($_FILES["icon_gray"]["size"] < 800000)){
+					$filename = $_FILES["icon_gray"]["name"];
+					$path = "media/".$_POST["name"]."/";
+					$iconname = "icon_gray.png";
+
+					if ($_FILES["icon_gray"]["error"] > 0){
+						$this->error[] = "Error: " . $_FILES["icon_gray"]["error"];
+					}else{						
+						if( file_exists("upload/" . $filename) ){
+							$this->error[] = $filename . " already exists. ";
+						}else{
+							move_uploaded_file( $_FILES["icon_gray"]["tmp_name"], $path.$filename );
+							rename( $path.$filename, $path.$iconname );
+						}
+					}
+				}else{
+					$this->error[] = "Invalid file in icon";
+				}
+
 			}
 		}
 	}

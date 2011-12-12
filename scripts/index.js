@@ -1,29 +1,13 @@
 $(document).ready(function() {
-	/* Add handlers for background image swapping */
+
 	$("div.project").mouseenter(function() {
-		var project = $(this).attr("name");
-
-		/* Replace whitespaces with %20 for URI */
-		var regex1 = /\s/gi; 	
-		project = project.replace( regex1, "%20");
-
-		/* Remove ? (and other characters if needed...) */
-		var regex2 = /\?/gi;  
-		project = project.replace( regex2, "");
-
-		$(this).css("background-image", "url(media/" + project + "/icon.png)");
+		$(this).children("img").fadeOut('slow', function() {
+			// Animation complete.
+		});
 	}).mouseleave(function() {
-		var project = $(this).attr("name");
-
-		/* Replace whitespaces with %20 for URI */
-		var regex1 = /\s/gi; 	
-		project = project.replace( regex1, "%20");
-
-		/* Remove ? (and other characters if needed...) */
-		var regex2 = /\?/gi;  
-		project = project.replace( regex2, "");
-
-		$(this).css("background-image", "url(media/" + project + "/icon_gray.png)");
+		$(this).children("img").fadeIn('slow', function() {
+			// Animation complete.
+		});
 	});
 
 	/* Opening project detail */

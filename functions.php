@@ -87,16 +87,18 @@ function htmlifyProject( $row ){
 	$id = $row["id"];
 	$name = $row["name"];
 	$description = $row["description"];
-
+	
+	// Remove illegal characters.
 	$dir = preg_replace( "{\?}i", "", "./media/" . $name );
 
 	$image = $dir . "/icon.png";
-	$image_gray = str_replace( ".png", "_gray.png", $image );
+
 	$year = $row["year"];
 	$tags = $row["tags"];
 
 	$ret = '<div id="'.$id.'" name="'.$name.'" class="project" style="background-image: url(\''.$image.'\')">';
 	
+	$image_gray = str_replace( ".png", "_gray.png", $image );
 	$ret .= '<img src="'.$image_gray.'" alt="Icon" class="greyscale" />';
 
 	$ret .= '<section class="projecttitle">';	
