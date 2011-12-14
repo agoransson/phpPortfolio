@@ -1,11 +1,11 @@
 $(document).ready(function() {
 
 	$("div.project").mouseenter(function() {
-		$(this).children("img").fadeOut('slow', function() {
+		$(this).children("img").stop(true,true).fadeOut('slow', function() {
 			// Animation complete.
 		});
 	}).mouseleave(function() {
-		$(this).children("img").fadeIn('slow', function() {
+		$(this).children("img").stop(true,true).fadeIn('slow', function() {
 			// Animation complete.
 		});
 	});

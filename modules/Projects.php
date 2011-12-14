@@ -107,7 +107,9 @@ class Projects extends CvModule {
 			mysql_query( $query, $link );
 			
 			// Create the project directory under the media folder
-			$ret = mkdir( "./media/" . $_POST["name"] );
+			$projectdir = preg_replace('/\?/', '', $_POST["name"]);
+			$ret = mkdir( "./media/" . $projectdir );
+
 			if( !$ret )
 				$this->error[] = "I tried to create the project folder, but failed. Could you set the permissions on ./media/ folder to 775 please?";
 			else{
@@ -117,7 +119,7 @@ class Projects extends CvModule {
 				// Rename the image to icon.png and 
 				if( ($_FILES["icon"]["type"] == "image/png") && ($_FILES["icon"]["size"] < 800000)){
 					$filename = $_FILES["icon"]["name"];
-					$path = "media/".$_POST["name"]."/";
+					$path = "media/".$projectdir."/";
 					$iconname = "icon.png";
 
 					if ($_FILES["icon"]["error"] > 0){
@@ -136,7 +138,7 @@ class Projects extends CvModule {
 				// Grayscale version
 				if( ($_FILES["icon_gray"]["type"] == "image/png") && ($_FILES["icon_gray"]["size"] < 800000)){
 					$filename = $_FILES["icon_gray"]["name"];
-					$path = "media/".$_POST["name"]."/";
+					$path = "media/".$projectdir."/";
 					$iconname = "icon_gray.png";
 
 					if ($_FILES["icon_gray"]["error"] > 0){

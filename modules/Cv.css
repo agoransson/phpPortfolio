@@ -1,0 +1,34 @@
+p {
+	text-align: left;
+	font-size: 0.8em;
+	margin: 5px;
+}
+
+form {
+	margin: 5px 0 10px 0;
+}
+
+table {
+	border: 0;
+	font-size: 0.8em;
+	width: 80%;
+	margin-bottom: 5px;
+}
+
+td {
+	padding: 2px;
+}
+
+input {
+	padding: 0;
+	border: 0;
+	width: 100%;
+}
+
+tr{
+	background-color: #999;
+}
+
+tr.banded {
+	background-color: #aaa;
+}

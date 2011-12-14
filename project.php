@@ -122,7 +122,6 @@ $title = $name;
 		<?php 
 		print "<h2>" . $title . "</h2>";
 		print "<h4>(" . $year . ")</h4>";
-		print "<h4>" . $for . "</h4>";
 		$strings = explode( "\n", $desc );
 		for( $i = 0; $i < count($strings); $i++ )
 			print "<p>" . $strings[$i] . "</p>";

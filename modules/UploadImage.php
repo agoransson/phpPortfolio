@@ -83,13 +83,8 @@ class UploadImage extends CvModule {
 					if( file_exists("upload/" . $_FILES["file"]["name"]) ){
 						$this->error[] = $_FILES["file"]["name"] . " already exists. ";
 					}else{
-						move_uploaded_file( $_FILES["file"]["tmp_name"], "media/".$_POST["project"]."/".$_FILES["file"]["name"] );
-						rename( "media/".$_POST["project"]."/".$_FILES["file"]["name"], "./media/".$_POST["project"]."/".$_FILES["file"]["name"] );
-						
-						$image = new SimpleImage();						
-						$image->load( "./media/".$_POST["project"]."/".$_FILES["file"]["name"] );
-						$image->resize( 810, 500 );
-						$image->save( "./media/".$_POST["project"]."/".$_FILES["file"]["name"] );
+						$projectdir = preg_replace( '/\?/', '', $_POST["project"] );
+						move_uploaded_file( $_FILES["file"]["tmp_name"], "media/".$projectdir."/".$_FILES["file"]["name"] );
 					}
 				}
 			}else{
