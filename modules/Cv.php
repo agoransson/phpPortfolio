@@ -114,12 +114,37 @@ class Cv extends CvModule {
 						$this->error[] = "Failed to add education: " . mysql_error();
 					break;
 				case "Save new professional experience":
-					// TODO add new prof. experience row
+					$title = $_POST["pro_title"];
+					$department = $_POST["pro_department"];
+					$organization = $_POST["pro_organization"];
+					$start = $_POST["pro_start"];
+					$end = $_POST["pro_end"];
+					$description = $_POST["pro_description"];
+					$query = "INSERT INTO " . $dbprefix . "experience (title, institution, organization, start, stop, description) 
+							  VALUES('$title', '$department', '$organization', '$start', '$end', '$description')";
+					if( !mysql_query($query,$link) )
+						$this->error[] = "Failed to add experience: " . mysql_error();
 					break;
 				case "Save new published work":
-					// TODO
+					$name = $_POST["pub_name"];
+					$mainwork = $_POST["pub_mainwork"];
+					$country = $_POST["pub_country"];
+					$year = $_POST["pub_year"];
+					$title = $_POST["pub_title"];
+					$description = $_POST["pub_description"];
+
+					$query = "INSERT INTO " . $dbprefix . "works (publisher, institution, country, year, title, description) 
+							  VALUES('$name', '$mainwork', '$country', '$year', '$title', '$description')";
+					if( !mysql_query($query,$link) )
+						$this->error[] = "Failed to add published work: " . mysql_error();
 					break;
 				case "Save new skill":
+					$name = $_POST["other_name"];
+					$description = $_POST["other_description"];
+
+					$query = "INSERT INTO " . $dbprefix . "other (title, description) VALUES('$name', '$description')";
+					if( !mysql_query($query,$link) )
+						$this->error[] = "Failed to add skill: " . mysql_error();
 					break;
 			}
 		}

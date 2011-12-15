@@ -190,7 +190,7 @@ if( isset($_GET["print"]) ){
 
 		<section id="cv_skills" class="cv">
 		<?php
-			$query = "SELECT title, description FROM " . $dbprefix . "skills ORDER BY title ASC";
+			$query = "SELECT title, description FROM " . $dbprefix . "other ORDER BY title ASC";
 			$result = mysql_query($query, $link) or die( mysql_error() );
 			$numrows = mysql_num_rows( $result );
 
