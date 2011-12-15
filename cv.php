@@ -1,4 +1,3 @@
-
 <?php
 
 /********************************************************\
@@ -57,13 +56,6 @@ if( isset($_GET["print"]) ){
 
 <body>
 
-<!-- For debugging purposes -->
-<?php
-//print("<pre>");
-//print_r($_GET);
-//print("</pre>");
-?>
-
 <!-- BEGIN PAGE -->
 <div id="wrapper">
 
@@ -105,11 +97,18 @@ if( isset($_GET["print"]) ){
 			$query = "SELECT ambitions FROM " . $dbprefix . "main ORDER BY id DESC LIMIT 1";
 			$result = mysql_query($query, $link) or die( mysql_error() );
 
-			print "<table style=\"text-align:justify\">";
 			while( $row = mysql_fetch_assoc($result) ){
-				print "<tr><td style=\"padding-bottom:".$rowpadding."px\"><p class=\"description\">" . $row["ambitions"] . "</p></td></tr>";
+				$paragraphs = explode("\n", $row["ambitions"]);
 			}
-			print "</table>";
+	
+			$buffer = "";
+			foreach( $paragraphs as $paragraph ){
+				$buffer .= '<p class="description">' . $paragraph . '</p>';
+			}
+
+			print '<table style="text-align:justify">';
+			print '<tr><td style="padding-bottom:'.$rowpadding.'px">' . $buffer . '</td></tr>';
+			print '</table>';
 		?>
 		</section>
 
