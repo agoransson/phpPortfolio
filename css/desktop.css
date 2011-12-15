@@ -32,7 +32,7 @@ body {
 #headerleft{
 	/*width: 122px;*/
 	text-align: left;
-	width: 50%;/*100px;*/
+	width: 30%;/*100px;*/
 	height: 40px;
 	float: left;
 }
@@ -43,7 +43,7 @@ body {
 }
 
 #headerright{
-	width: 50%; /*720px;*/
+	width: 70%; /*720px;*/
 	height: 40px;
 	float: left;
 	padding: 0;

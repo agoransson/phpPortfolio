@@ -61,13 +61,13 @@ $title = $name;
 		
 	$webkit = strpos($_SERVER['HTTP_USER_AGENT'],"AppleWebKit");		
 	if($webkit === true){
-		print "<link rel=\"stylesheet\" type=\"text/css\" href=\"./css/desktop.css\">";
-		print "<link rel=\"stylesheet\" type=\"text/css\" href=\"./css/gallery.css\">";
-		print "<link rel=\"stylesheet\" type=\"text/css\" href=\"./css/project.css\">";
+		print "<link rel=\"stylesheet" type="text/css" href="./css/desktop.css">";
+		print "<link rel="stylesheet" type="text/css" href="./css/gallery.css">";
+		print "<link rel="stylesheet" type="text/css" href="./css/project.css">";
 	}else{
-		print "<link rel=\"stylesheet\" type=\"text/css\" href=\"./css/desktop.css\">";
-		print "<link rel=\"stylesheet\" type=\"text/css\" href=\"./css/gallery.css\">";
-		print "<link rel=\"stylesheet\" type=\"text/css\" href=\"./css/project.css\">";
+		print "<link rel="stylesheet" type="text/css" href="./css/desktop.css">";
+		print "<link rel="stylesheet" type="text/css" href="./css/gallery.css">";
+		print "<link rel="stylesheet" type="text/css" href="./css/project.css">";
 	}
 ?>
 
@@ -111,7 +111,7 @@ $title = $name;
 			for( $i = 0; $i < count($files); $i++ ){
 				$file = preg_replace( "{\?}i", "", $files[$i] );			
 				if( strpos($file,"icon") === false ){
-					print "<li><img src=\"" . $dir . "/" . $file . "\" alt=\"" . $file . "\" /></li>";
+					print '<li><img src="'.$dir.'/'.$file.'" alt="'.$file.'" /></li>';
 				}
 			}
 		?>
