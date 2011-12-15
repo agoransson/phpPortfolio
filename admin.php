@@ -28,11 +28,6 @@ if( count($_GET) == 0 )
 else if( count($_GET) > 0 && !Login::LoggedIn() && $_GET["mod"] !== "Login" )
 	header( "Location: admin.php?mod=Login" );
 
-// Load default module (Projects) if no module is loaded
-// if( (isset($_POST["loggedIn"]) && $_POST["loggedIn"] === true) && !isset($_GET["mod"]) ){
-	// header( "Location: admin.php?mod=Projects" );
-// }
-
 // Load all modules (Except the Login module)
 foreach( glob("modules/*.php") as $module ){
 	$classname = preg_replace('/\.[^.]*$/', '', basename ( $module ));

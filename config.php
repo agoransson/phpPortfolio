@@ -15,7 +15,12 @@ include_once("functions.php");
 
 global $link, $dbprefix, $dbname, $dbuser, $dbpass, $dbhost;
 
-// Include all modules
+// Include all base modules
+foreach( glob("base/*.php") as $module ){
+    include $module;
+}
+
+// Include all extra modules
 foreach( glob("modules/*.php") as $module ){
     include $module;
 }

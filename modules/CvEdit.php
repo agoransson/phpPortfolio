@@ -13,7 +13,7 @@
 
 include_once("CvModule.php");
 
-class Cv extends CvModule {
+class CvEdit extends CvModule {
 	
 	function Description(){
 		return "<p>This plugin allows the user to administer the CV part of the website.</p>";

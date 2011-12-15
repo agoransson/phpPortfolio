@@ -69,7 +69,7 @@ if( $webkit === true ){
 }else{
 	switch( $title ){
 		case "portfolio":
-			print '<p class="titleright"><a href="index.php">portfolio</a>|<a class="notselected" href="cv.php">CV</a>';
+			print '<p class="titleright"><a href="index.php?page=Portfolio">portfolio</a>|<a class="notselected" href="index.php?page=Cv">CV</a>';
 			break;
 		case "cv":
 			print '<p class="titleright"><a class="notselected" href="index.php">portfolio</a>|<a href="cv.php">CV</a>';

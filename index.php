@@ -14,15 +14,35 @@
 /* Include the configuration file - contains the database connection */
 include_once("config.php");
 
-$title = "portfolio";
+$defaultpage = "Portfolio";
+
+if( isset($_GET["page"]) )
+	$title = strtolower($_GET["page"]);
 
 global $link, $dbprefix;
-
 
 if( !checkInstalled() ){
 	header( "Location: install.php" );
 }else if( checkInstallFile() ){
 	die( printError('Please remove, or rename, the "install.php" file') );
+}
+
+// Make sure we've selected a base module
+if( !isset($_GET["page"]) ){
+	header( "Location: index.php?page=$defaultpage" );
+}else{
+	// TODO regex to make sure the page exists in ./base/ otherwise point to default
+}
+
+
+
+
+$basemodules = array();
+
+// Load all basemodules (Except the Login module)
+foreach( glob("base/*.php") as $module ){
+	$classname = preg_replace( '/\.[^.]*$/', '', basename($module) );
+	$basemodules[] = new $classname();
 }
 
 ?>
@@ -40,14 +60,21 @@ if( !checkInstalled() ){
 		
 		$webkit = strpos($_SERVER['HTTP_USER_AGENT'],"AppleWebKit");
 
+		// Load common CSS
 		if($webkit === true){
 			print '<link rel="stylesheet" type="text/css" href="./css/webkit.css">';
 			print '<link rel="stylesheet" type="text/css" href="./css/emailpopup.css">';
-			print '<link rel="stylesheet" type="text/css" href="./css/index.css">';
 		}else{
 			print '<link rel="stylesheet" type="text/css" href="./css/desktop.css">';
 			print '<link rel="stylesheet" type="text/css" href="./css/emailpopup.css">';
-			print '<link rel="stylesheet" type="text/css" href="./css/index.css">';
+		}
+
+		// Load mod CSS
+		foreach( $basemodules as $mod ){
+			if( get_class($mod) === $_GET["page"] ){
+				print '<link rel="stylesheet" type="text/css" href="./css/'.$mod->Name().'.css">';
+				break;
+			}
 		}
 	?>
 
@@ -67,13 +94,11 @@ if( !checkInstalled() ){
 
 	<!-- BEGIN SPECIFIC CONTENT -->
 	<div id="content">
-	<?php		
-		// TODO Create module for this?
-		if( checkInstalled() ){
-			$query = "SELECT * FROM " . $dbprefix . "projects ORDER BY year DESC, name ASC";
-			$result = mysql_query($query, $link) or die ( mysql_error() );			
-			while( $row = mysql_fetch_assoc($result) ){
-				print htmlifyProject($row);
+	<?php
+		foreach( $basemodules as $mod ){
+			if( get_class($mod) === $_GET["page"] ){
+				print $mod->Content();
+				break;
 			}
 		}
 	?>
